@@ -1,17 +1,22 @@
+import { Variable } from './types';
+
 const RE_OPERATORS = /(?<operator>\+|-|\*|\/)/m;
-const RE_ARITHMETIC = /(?<number>[0-9]+)|(?<operator>\+|-|\*|\/)|(?<paren>\(|\))/gm;
+const RE_ARITHMETIC = /(?<num>[0-9]+)|(?<op>\+|-|\*|\/)|(?<paren>\(|\))|(?<var>[A-Za-z0-9]+)/gm;
 
 type Operator = '+' | '-' | '*' | '/';
 
-export function tokenize(input: string) {
+export function tokenize(input: string, variables: Variable[]) {
   const matches = [];
   let match;
 
   while ((match = RE_ARITHMETIC.exec(input)) !== null) {
-    if (match?.groups && match.groups['number']) {
+    if (match?.groups && match.groups['num']) {
       matches.push(parseFloat(match[0]));
-    } else if (match?.groups && (match.groups['operator'] || match.groups['paren'])) {
+    } else if (match?.groups && (match.groups['op'] || match.groups['paren'])) {
       matches.push(match[0]);
+    } else if (match?.groups && match.groups['var']) {
+      const token = match[0] as string;
+      matches.push(variables.find((v) => v.name === token)?.value as number);
     }
   }
 
