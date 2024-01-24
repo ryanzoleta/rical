@@ -18,6 +18,11 @@ export function tokenize(input: string) {
   return matches;
 }
 
+/**
+ * Converts arithmetic expression in infix notation to postfix notation
+ * @param tokens - infix expression
+ * @returns postfix expression
+ */
 export function shuntingYard(tokens: (string | number)[]) {
   const outputQueue = [];
   const operatorStack: string[] = [];
@@ -55,6 +60,11 @@ export function shuntingYard(tokens: (string | number)[]) {
   return outputQueue;
 }
 
+/**
+ * Evaluates the result of an arithmetic expression in postfix notation
+ * @param tokens
+ * @returns
+ */
 export function evaluateRpn(tokens: (string | number)[]) {
   console.log('evaluateRpn START, tokens =', tokens);
 
