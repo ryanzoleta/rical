@@ -14,5 +14,5 @@ export function evaluate(input: string) {
     console.log('error', e);
   }
 
-  return result.toString();
+  return result?.toString();
 }

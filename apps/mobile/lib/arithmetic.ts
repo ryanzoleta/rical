@@ -50,7 +50,9 @@ export function evaluateRpn(tokens: (string | number)[]) {
       let op2 = stack.pop();
       let op1 = stack.pop();
 
-      if (!op1 || !op2) throw new Error('syntax error i think');
+      if (!op1 && !op2) return 0;
+      if (!op1) return op2 as number;
+      if (!op2) return op1 as number;
 
       switch (token) {
         case '+':
