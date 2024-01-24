@@ -1,6 +1,8 @@
 const RE_OPERATORS = /(?<operator>\+|-|\*|\/)/m;
 const RE_ARITHMETIC = /(?<number>[0-9]+)|(?<operator>\+|-|\*|\/)/gm;
 
+type Operator = '+' | '-' | '*' | '/';
+
 export function tokenize(input: string) {
   const matches = [];
   let match;
@@ -24,7 +26,9 @@ export function shuntingYard(tokens: (string | number)[]) {
     if (typeof token === 'number') {
       outputQueue.push(token);
     } else if (RE_OPERATORS.test(token)) {
-      while (operatorStack.length > 0) {
+      const top = operatorStack.length > 0 ? operatorStack[operatorStack.length - 1] : '+';
+
+      while (operatorStack.length > 0 && top !== '(' && precedence(top, token)) {
         outputQueue.push(operatorStack.pop() as string);
       }
       operatorStack.push(token);
@@ -75,4 +79,21 @@ export function evaluateRpn(tokens: (string | number)[]) {
 
   console.log('evaluateRpn START, stack =', stack);
   return stack[0];
+}
+
+/**
+ * Returns true if A has greater precedence over B, false if B has greater precedence, and true if both have the same precedence
+ * @param A - an operator
+ * @param B - an operator
+ * @returns
+ */
+function precedence(A: string, B: string): boolean {
+  const highPrecedence = ['*', '/'];
+  const lowPrecedence = ['+', '-'];
+
+  return (
+    (highPrecedence.includes(A) && lowPrecedence.includes(B)) ||
+    (lowPrecedence.includes(A) && lowPrecedence.includes(B)) ||
+    highPrecedence.includes(A) === highPrecedence.includes(B)
+  );
 }
