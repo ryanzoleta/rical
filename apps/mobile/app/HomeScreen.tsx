@@ -1,10 +1,20 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { SafeAreaView, StatusBar, Text, TextInput, View, useColorScheme } from 'react-native';
+import {
+  Pressable,
+  SafeAreaView,
+  StatusBar,
+  Text,
+  TextInput,
+  View,
+  useColorScheme,
+} from 'react-native';
 import { twMerge } from 'tailwind-merge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Props } from '.';
 import { evaluate, isAssignment, isComment } from '../lib/evaluate';
 import { Variable, Result } from '../lib/types';
+import { Calculator, Cog, Keyboard } from 'lucide-react-native';
+import colors from 'tailwindcss/colors';
 
 function formatInput(text: string) {
   const texts = [];
@@ -27,8 +37,10 @@ export function HomeScreen({}: Props) {
   const [outputs, setOutputs] = useState<Result[]>([]);
   const [formattedInputs, setFormattedInputs] = useState<ReactNode[][]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [keyboardType, setKeyboardType] = useState<'numeric' | 'default'>('numeric');
 
   const secondToTheLastInput = useRef<TextInput | null>(null);
+  const focusedTextInput = useRef<TextInput | null>(null);
 
   const mode = useColorScheme();
   StatusBar.setBarStyle(mode === 'dark' ? 'light-content' : 'dark-content');
@@ -74,18 +86,41 @@ export function HomeScreen({}: Props) {
     setOutputs(perLineOutput);
   }, [inputs]);
 
+  useEffect(() => {
+    if (focusedTextInput.current) {
+      focusedTextInput.current.blur();
+      focusedTextInput.current.focus();
+    }
+  }, [keyboardType]);
+
   return (
     <SafeAreaView
       className={twMerge('min-h-screen', mode === 'dark' ? 'bg-zinc-900' : 'bg-zinc-100')}
     >
-      <Text
-        className={twMerge(
-          'text-center text-xl',
-          mode === 'dark' ? 'text-zinc-500' : 'text-zinc-900',
-        )}
-      >
-        Rical
-      </Text>
+      <View className="flex-row justify-between p-3">
+        <Cog color={colors.zinc[500]} />
+
+        <Text
+          className={twMerge(
+            'text-center text-xl',
+            mode === 'dark' ? 'text-zinc-500' : 'text-zinc-900',
+          )}
+        >
+          Rical
+        </Text>
+
+        <Pressable
+          onPress={() => {
+            setKeyboardType(keyboardType === 'numeric' ? 'default' : 'numeric');
+          }}
+        >
+          {keyboardType === 'numeric' ? (
+            <Keyboard color={colors.zinc[500]} />
+          ) : (
+            <Calculator color={colors.zinc[500]} />
+          )}
+        </Pressable>
+      </View>
 
       <View>
         <View className="flex-row justify-between">
@@ -100,6 +135,10 @@ export function HomeScreen({}: Props) {
                 )}
                 autoFocus
                 autoCapitalize="none"
+                keyboardType={keyboardType}
+                onFocus={(event) => {
+                  focusedTextInput.current = event.target as TextInput;
+                }}
                 onSubmitEditing={() => {
                   setInputs([...inputs, '']);
                 }}

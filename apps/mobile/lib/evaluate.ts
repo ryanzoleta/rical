@@ -49,6 +49,7 @@ function format(result: string | number, format: FormatType) {
         return Intl.NumberFormat(locale, {
           currency: 'usd',
           style: 'currency',
+          currencyDisplay: 'narrowSymbol',
           maximumFractionDigits: 2,
           minimumFractionDigits: 0,
         }).format(result);
