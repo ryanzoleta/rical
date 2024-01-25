@@ -1,7 +1,8 @@
 import { Variable } from './types';
 
 const RE_OPERATORS = /(?<operator>\+|-|\*|\/)/m;
-const RE_ARITHMETIC = /(?<num>[0-9]+)|(?<op>\+|-|\*|\/)|(?<paren>\(|\))|(?<var>[A-Za-z0-9]+)/gm;
+const RE_ARITHMETIC =
+  /(?<num>([0-9]+.[0-9]*)|([0-9]+))|(?<op>\+|-|\*|\/)|(?<paren>\(|\))|(?<var>[A-Za-z0-9]+)/gm;
 
 type Operator = '+' | '-' | '*' | '/';
 
@@ -89,8 +90,7 @@ export function evaluateRpn(tokens: (string | number)[]) {
       stack.push(evaluate(op1, op2, token as Operator));
     }
   }
-
-  console.log('evaluateRpn START, stack =', stack);
+  +console.log('evaluateRpn START, stack =', stack);
   return stack[0];
 }
 
