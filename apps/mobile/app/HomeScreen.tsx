@@ -54,12 +54,16 @@ export function HomeScreen({}: Props) {
       let result;
 
       if (input === '') {
-        result = { raw: ' ', formatted: ' ' };
+        result = { raw: ' ', formatted: ' ', formatType: 'comment' } as Result;
       } else if (isAssignment(input)) {
         result = evaluate(input.split('=')[1].trim(), variables);
-        variables.push({ name: input.split('=')[0].trim(), value: result.raw });
+        variables.push({
+          name: input.split('=')[0].trim(),
+          value: result.raw,
+          isCurrency: result.formatType === 'currency',
+        });
       } else if (isComment(input)) {
-        result = { raw: ' ', formatted: ' ' };
+        result = { raw: ' ', formatted: ' ', formatType: 'comment' } as Result;
       } else {
         result = evaluate(input.trim(), variables);
       }
@@ -95,6 +99,7 @@ export function HomeScreen({}: Props) {
                   mode === 'dark' ? 'text-white' : 'text-black',
                 )}
                 autoFocus
+                autoCapitalize="none"
                 onSubmitEditing={() => {
                   setInputs([...inputs, '']);
                 }}
