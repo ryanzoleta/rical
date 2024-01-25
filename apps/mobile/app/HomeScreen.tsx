@@ -6,33 +6,49 @@ import { Props } from '.';
 import { evaluate, isAssignment } from '../lib/evaluate';
 import { Variable, Result } from '../lib/types';
 
+function formatInput(text: string) {
+  const texts = [];
+
+  if (isAssignment(text)) {
+    const tokens = text.split('=');
+    texts.push(<Text className="text-blue-500">{tokens[0]}=</Text>);
+    texts.push(<Text>{tokens[1]}</Text>);
+  } else {
+    texts.push(text);
+  }
+
+  return texts;
+}
+
 export function HomeScreen({}: Props) {
-  const [inputList, setInputList] = useState(['']);
+  const [inputs, setInputs] = useState(['']);
   const [outputs, setOutputs] = useState<Result[]>([]);
-  const [formattedInputList, setFormattedInputList] = useState<ReactNode[][]>([]);
-  // const [loaded, setLoaded] = useState(false);
+  const [formattedInputs, setFormattedInputs] = useState<ReactNode[][]>([]);
+  const [loaded, setLoaded] = useState(false);
 
   const secondToTheLastInput = useRef<TextInput | null>(null);
 
   const mode = useColorScheme();
   StatusBar.setBarStyle(mode === 'dark' ? 'light-content' : 'dark-content');
 
-  // useEffect(() => {
-  //   AsyncStorage.getItem('inputList').then((value) => setInputList(JSON.parse(value ?? '[""]')));
-  //   setLoaded(true);
-  // }, []);
-
-  // useEffect(() => {
-  //   if (loaded) AsyncStorage.setItem('inputList', JSON.stringify(inputList));
-  // }, [inputList]);
+  useEffect(() => {
+    AsyncStorage.getItem('inputs').then((value) => {
+      const list = JSON.parse(value ?? '[""]') as typeof inputs;
+      setInputs(list);
+      setFormattedInputs(list.map(formatInput));
+    });
+    setLoaded(true);
+  }, []);
 
   useEffect(() => {
-    console.log(JSON.stringify(inputList));
+    if (loaded) AsyncStorage.setItem('inputs', JSON.stringify(inputs));
+  }, [inputs]);
 
+  useEffect(() => {
     const perLineOutput: Result[] = [];
     const variables: Variable[] = [];
 
-    for (const input of inputList) {
+    for (const input of inputs) {
       let result;
 
       if (input === '') {
@@ -48,7 +64,7 @@ export function HomeScreen({}: Props) {
     }
 
     setOutputs(perLineOutput);
-  }, [inputList]);
+  }, [inputs]);
 
   return (
     <SafeAreaView
@@ -66,54 +82,41 @@ export function HomeScreen({}: Props) {
       <View>
         <View className="flex-row justify-between">
           <View className="flex-1">
-            {inputList.map((input, index) => (
+            {inputs.map((input, index) => (
               <TextInput
                 key={index}
-                ref={index === inputList.length - 2 ? secondToTheLastInput : null}
+                ref={index === inputs.length - 2 ? secondToTheLastInput : null}
                 className={twMerge(
                   'font-jetBrainsMono px-3 text-2xl',
                   mode === 'dark' ? 'text-white' : 'text-black',
                 )}
                 autoFocus
                 onSubmitEditing={() => {
-                  setInputList([...inputList, '']);
+                  setInputs([...inputs, '']);
                 }}
                 onKeyPress={(event) => {
-                  if (event.nativeEvent.key === 'Backspace') {
-                    if (inputList[index] === '' && inputList.length > 1) {
-                      setInputList(inputList.slice(0, -1));
-                      if (secondToTheLastInput.current) {
-                        secondToTheLastInput.current.focus();
-                      }
+                  if (
+                    event.nativeEvent.key === 'Backspace' &&
+                    inputs[index] === '' &&
+                    inputs.length > 1
+                  ) {
+                    setInputs(inputs.slice(0, -1));
+                    if (secondToTheLastInput.current) {
+                      secondToTheLastInput.current.focus();
                     }
                   }
                 }}
                 onChangeText={(text) => {
-                  const newInputList = [...inputList];
-                  newInputList[index] = text;
-                  setInputList(newInputList);
+                  setInputs([...inputs.slice(0, index), text, ...inputs.slice(index + 1)]);
 
-                  const formattedInputLines = [];
-
-                  const lines = text.split('\n');
-
-                  for (const line of lines) {
-                    if (isAssignment(line)) {
-                      const tokens = line.split('=');
-                      formattedInputLines.push(<Text className="text-blue-500">{tokens[0]}=</Text>);
-                      formattedInputLines.push(<Text>{tokens[1]}</Text>);
-                    } else {
-                      formattedInputLines.push(line);
-                    }
-                  }
-
-                  const originalFormattedInputList = formattedInputList;
-                  originalFormattedInputList[index] = formattedInputLines;
-
-                  setFormattedInputList(originalFormattedInputList);
+                  setFormattedInputs([
+                    ...formattedInputs.slice(0, index),
+                    formatInput(text),
+                    ...formattedInputs.slice(index + 1),
+                  ]);
                 }}
               >
-                <Text>{formattedInputList[index]}</Text>
+                <Text>{formattedInputs[index]}</Text>
               </TextInput>
             ))}
           </View>
