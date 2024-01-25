@@ -13,9 +13,9 @@ const locales = getLocales();
 const locale = locales.slice(-1)[0].regionCode ?? 'US';
 
 export function evaluate(input: string, variables: Variable[]) {
-  let formatType: FormatType = determineOutputFormat(input);
-  let tokens = tokenize(input, variables);
-  let rpn = shuntingYard(tokens);
+  const formatType: FormatType = determineOutputFormat(input);
+  const tokens = tokenize(input, variables);
+  const rpn = shuntingYard(tokens);
   let result = 0;
 
   try {
@@ -24,7 +24,7 @@ export function evaluate(input: string, variables: Variable[]) {
     console.log('error', e);
   }
 
-  return { raw: result, formatted: format(result, formatType), formatType } as Result;
+  return { raw: result, formatted: result.toString() } as Result;
 }
 
 function determineOutputFormat(input: string): FormatType {
