@@ -3,6 +3,7 @@ import { tokenize, shuntingYard, evaluateRpn } from './arithmetic';
 import { FormatType, Result, Variable } from './types';
 
 export const RE_ASSIGN = /^([A-Za-z0-9]+)( *)=(.*)$/m;
+export const RE_COMMENT = /^#(.*)$/m;
 const RE_CURRENCY_CONVERSION =
   /^(((?<amount>[0-9]+)( *)(?<currency1>usd|php))|((?<currency1>\$|\₱)(?<amount>[0-9]+)))( *)(in)( *)(?<currency2>usd|php)$/gm;
 
@@ -36,11 +37,6 @@ function format(result: string | number, format: FormatType) {
   switch (format) {
     case 'regular-number':
       if (typeof result === 'number') {
-        if (result % 1 === 0) {
-          return result;
-        }
-        console.log('locale', locale);
-        // return Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(result);
         return Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(result);
       }
   }
@@ -48,4 +44,8 @@ function format(result: string | number, format: FormatType) {
 
 export function isAssignment(input: string) {
   return RE_ASSIGN.test(input);
+}
+
+export function isComment(input: string) {
+  return RE_COMMENT.test(input);
 }

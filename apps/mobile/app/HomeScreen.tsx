@@ -3,7 +3,7 @@ import { SafeAreaView, StatusBar, Text, TextInput, View, useColorScheme } from '
 import { twMerge } from 'tailwind-merge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Props } from '.';
-import { evaluate, isAssignment } from '../lib/evaluate';
+import { evaluate, isAssignment, isComment } from '../lib/evaluate';
 import { Variable, Result } from '../lib/types';
 
 function formatInput(text: string) {
@@ -13,6 +13,8 @@ function formatInput(text: string) {
     const tokens = text.split('=');
     texts.push(<Text className="text-blue-500">{tokens[0]}=</Text>);
     texts.push(<Text>{tokens[1]}</Text>);
+  } else if (isComment(text)) {
+    texts.push(<Text className="text-orange-500">{text}</Text>);
   } else {
     texts.push(text);
   }
@@ -56,6 +58,8 @@ export function HomeScreen({}: Props) {
       } else if (isAssignment(input)) {
         result = evaluate(input.split('=')[1].trim(), variables);
         variables.push({ name: input.split('=')[0].trim(), value: result.raw });
+      } else if (isComment(input)) {
+        result = { raw: ' ', formatted: ' ' };
       } else {
         result = evaluate(input.trim(), variables);
       }
