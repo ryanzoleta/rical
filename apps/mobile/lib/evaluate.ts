@@ -1,19 +1,19 @@
-import { getLocales } from 'expo-localization';
+// import { getLocales } from 'expo-localization';
 import { tokenize, shuntingYard, evaluateRpn } from './arithmetic';
-import { FormatType, Result, Variable } from './types';
+import { Result, Variable } from './types';
 
 export const RE_ASSIGN = /^([A-Za-z0-9]+)( *)=(.*)$/m;
 export const RE_COMMENT = /^#(.*)$/m;
 export const RE_CURRENCY =
-  /((\$|\₱) *[0-9]+)|( *[0-9]+ *(\$|\₱))|([a-zA-Z]{3} *[0-9]+)|([0-9]+ *[a-zA-Z]{3})/m;
-const RE_CURRENCY_CONVERSION =
-  /^(((?<amount>[0-9]+)( *)(?<currency1>usd|php))|((?<currency1>\$|\₱)(?<amount>[0-9]+)))( *)(in)( *)(?<currency2>usd|php)$/gm;
+  /((\$|₱) *[0-9]+)|( *[0-9]+ *(\$|₱))|([a-zA-Z]{3} *[0-9]+)|([0-9]+ *[a-zA-Z]{3})/m;
+// const RE_CURRENCY_CONVERSION =
+//   /^(((?<amount>[0-9]+)( *)(?<currency1>usd|php))|((?<currency1>\$|\₱)(?<amount>[0-9]+)))( *)(in)( *)(?<currency2>usd|php)$/gm;
 
-const locales = getLocales();
-const locale = locales.slice(-1)[0].regionCode ?? 'US';
+// const locales = getLocales();
+// const locale = locales.slice(-1)[0].regionCode ?? 'US';
 
 export function evaluate(input: string, variables: Variable[]) {
-  const formatType: FormatType = determineOutputFormat(input);
+  // const formatType: FormatType = determineOutputFormat(input);
   const tokens = tokenize(input, variables);
   const rpn = shuntingYard(tokens);
   let result = 0;
@@ -27,34 +27,34 @@ export function evaluate(input: string, variables: Variable[]) {
   return { raw: result, formatted: result.toString() } as Result;
 }
 
-function determineOutputFormat(input: string): FormatType {
-  if (isCurrency(input)) {
-    return 'currency';
-  }
-  return 'regular-number';
-}
+// function determineOutputFormat(input: string): FormatType {
+//   if (isCurrency(input)) {
+//     return 'currency';
+//   }
+//   return 'regular-number';
+// }
 
-function format(result: string | number, format: FormatType) {
-  if (!result) {
-    return;
-  }
+// function format(result: string | number, format: FormatType) {
+//   if (!result) {
+//     return;
+//   }
 
-  switch (format) {
-    case 'regular-number':
-      if (typeof result === 'number') {
-        return Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(result);
-      }
-    case 'currency':
-      if (typeof result === 'number')
-        return Intl.NumberFormat(locale, {
-          currency: 'usd',
-          style: 'currency',
-          currencyDisplay: 'narrowSymbol',
-          maximumFractionDigits: 2,
-          minimumFractionDigits: 0,
-        }).format(result);
-  }
-}
+//   switch (format) {
+//     case 'regular-number':
+//       if (typeof result === 'number') {
+//         return Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(result);
+//       }
+//     case 'currency':
+//       if (typeof result === 'number')
+//         return Intl.NumberFormat(locale, {
+//           currency: 'usd',
+//           style: 'currency',
+//           currencyDisplay: 'narrowSymbol',
+//           maximumFractionDigits: 2,
+//           minimumFractionDigits: 0,
+//         }).format(result);
+//   }
+// }
 
 export function isAssignment(input: string) {
   return RE_ASSIGN.test(input);

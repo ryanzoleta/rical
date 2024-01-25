@@ -80,8 +80,8 @@ export function evaluateRpn(tokens: (string | number)[]) {
     if (typeof token === 'number') {
       stack.push(token);
     } else {
-      let op2 = stack.pop();
-      let op1 = stack.pop();
+      const op2 = stack.pop();
+      const op1 = stack.pop();
 
       if (!op1 && !op2) return 0;
       if (!op1) return op2 as number;

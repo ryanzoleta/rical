@@ -6,9 +6,7 @@ import '../global.css';
 import React from 'react';
 import { useColorScheme } from 'react-native';
 
-type Props = {};
-
-function RootLayoutView({}: Props) {
+function RootLayoutView() {
   const mode = useColorScheme();
   const [fontsLoaded] = useFonts({
     JetBrainsMono: require('../assets/fonts/JetBrainsMono-Regular.ttf'),
