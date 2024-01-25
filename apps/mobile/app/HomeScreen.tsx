@@ -95,7 +95,7 @@ export function HomeScreen({}: Props) {
                 key={index}
                 ref={index === inputs.length - 2 ? secondToTheLastInput : null}
                 className={twMerge(
-                  'font-jetBrainsMono px-3 text-2xl',
+                  'font-jetBrainsMono px-3 text-lg',
                   mode === 'dark' ? 'text-white' : 'text-black',
                 )}
                 autoFocus
@@ -133,7 +133,7 @@ export function HomeScreen({}: Props) {
           <View>
             {outputs.map((output, index) => (
               <Text
-                className="font-jetBrainsMono px-3 text-right text-2xl text-lime-500"
+                className="font-jetBrainsMono px-3 text-right text-lg text-lime-500"
                 key={index}
               >
                 {output.formatted}
