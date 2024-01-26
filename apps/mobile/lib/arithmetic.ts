@@ -2,8 +2,7 @@ import { Variable } from './types';
 
 const RE_OPERATORS = /(?<operator>\+|-|\*|\/)/m;
 const RE_ARITHMETIC =
-  /(?<num>([0-9]+.[0-9]*)|([0-9]+))|(?<op>\+|-|\*|\/)|(?<paren>\(|\))|(?<var>[A-Za-z0-9]+)/gm;
-
+  /(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/)|(?<paren>\(|\))|(?<var>[A-Za-z0-9]+)/gm;
 type Operator = '+' | '-' | '*' | '/';
 
 export function tokenize(input: string, variables: Variable[]) {
@@ -11,8 +10,9 @@ export function tokenize(input: string, variables: Variable[]) {
   let match;
 
   while ((match = RE_ARITHMETIC.exec(input)) !== null) {
+    console.log('match:', match[0]);
     if (match?.groups && match.groups['num']) {
-      matches.push(parseFloat(match[0]));
+      matches.push(parseFloat(match[0].replace(',', '')));
     } else if (match?.groups && (match.groups['op'] || match.groups['paren'])) {
       matches.push(match[0]);
     } else if (match?.groups && match.groups['var']) {
@@ -20,6 +20,8 @@ export function tokenize(input: string, variables: Variable[]) {
       matches.push(variables.find((v) => v.name === token)?.value as number);
     }
   }
+
+  console.log('');
 
   return matches;
 }

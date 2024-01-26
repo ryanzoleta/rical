@@ -4,8 +4,8 @@ import { Result, Variable } from './types';
 
 export const RE_ASSIGN = /^([A-Za-z0-9]+)( *)=(.*)$/m;
 export const RE_COMMENT = /^#(.*)$/m;
-export const RE_CURRENCY =
-  /((\$|₱) *[0-9]+)|( *[0-9]+ *(\$|₱))|([a-zA-Z]{3} *[0-9]+)|([0-9]+ *[a-zA-Z]{3})/m;
+// export const RE_CURRENCY =
+//   /((\$|₱) *[0-9]+)|( *[0-9]+ *(\$|₱))|([a-zA-Z]{3} *[0-9]+)|([0-9]+ *[a-zA-Z]{3})/m;
 // const RE_CURRENCY_CONVERSION =
 //   /^(((?<amount>[0-9]+)( *)(?<currency1>usd|php))|((?<currency1>\$|\₱)(?<amount>[0-9]+)))( *)(in)( *)(?<currency2>usd|php)$/gm;
 
@@ -24,7 +24,7 @@ export function evaluate(input: string, variables: Variable[]) {
     console.log('error', e);
   }
 
-  return { raw: result, formatted: result.toString() } as Result;
+  return { raw: result, formatted: result?.toString() } as Result;
 }
 
 // function determineOutputFormat(input: string): FormatType {
@@ -64,6 +64,6 @@ export function isComment(input: string) {
   return RE_COMMENT.test(input);
 }
 
-export function isCurrency(input: string) {
-  return RE_CURRENCY.test(input);
-}
+// export function isCurrency(input: string) {
+//   return RE_CURRENCY.test(input);
+// }
