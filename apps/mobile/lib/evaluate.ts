@@ -4,7 +4,7 @@ import { Result, Variable } from './types';
 export const RE_ASSIGN = /^([A-Za-z0-9]+)( *)=(.*)$/m;
 export const RE_COMMENT = /^#(.*)$/m;
 export const RE_CONVERSION =
-  /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)?(?<src>[a-zA-Z]+) +(to|in) (?<dest>[a-zA-Z]+)$/m;
+  /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)?(?<src>[a-zA-Z]+) +(to|in) (?<dest>[a-zA-Z]+)$/gm;
 const RE_OPERATORS = /(?<operator>\+|-|\*|\/)/m;
 const RE_ARITHMETIC =
   /(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/)|(?<paren>\(|\))|(?<var>[A-Za-z0-9]+)/gm;
@@ -22,9 +22,10 @@ export function evaluate(input: string, variables: Variable[]) {
   // const formatType: FormatType = determineOutputFormat(input);
 
   if (isConversion(input)) {
+    RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
     console.log('conversion tokens', tokens);
-    return { raw: 'conv', formatted: 'conv' } as Result;
+    return { raw: 'conv', formatted: JSON.stringify(tokens) } as Result;
   }
 
   const tokens = tokenizeArithmetic(input, variables);
@@ -86,25 +87,20 @@ export function isConversion(input: string) {
 // }
 
 function tokenizeConversion(input: string, variables: Variable[]) {
-  const matches = [];
-  let match;
+  const groups = RE_CONVERSION.exec(input)?.groups;
+  const struct: { num: number; src: string; dest: string } = { num: 0, src: '', dest: '' };
 
-  while ((match = RE_CONVERSION.exec(input)) !== null) {
-    if (match?.groups && match.groups['num']) {
-      matches.push(parseFloat(match[0].replace(',', '')));
-    } else if (match?.groups && match.groups['dest']) {
-      matches.push(match[0]);
-    } else if (match?.groups && match.groups['src']) {
-      const token = match[0] as string;
-      if (variables.find((v) => v.name === token)) {
-        matches.push(variables.find((v) => v.name === token)?.value as number);
-      } else {
-        matches.push(match[0]);
-      }
-    }
+  if (!groups) return null;
+
+  if (variables.find((v) => v.name === groups?.src)) {
+    struct.num = variables.find((v) => v.name === groups?.src)?.value as number;
   }
 
-  return matches;
+  struct.dest = groups.dest;
+  struct.src = groups.src;
+  struct.num = typeof groups.num === 'string' ? parseFloat(groups.num.replace(',', '')) : 0;
+
+  return struct;
 }
 
 function tokenizeArithmetic(input: string, variables: Variable[]) {
