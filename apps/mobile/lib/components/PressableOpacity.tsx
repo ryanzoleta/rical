@@ -10,7 +10,7 @@ type Props = {
   onPress: () => void;
 };
 
-function HighlightedPressable(props: Props) {
+function PressableOpacity(props: Props) {
   const opacity = useSharedValue(1);
 
   const handlePressIn = () => {
@@ -34,4 +34,4 @@ function HighlightedPressable(props: Props) {
   );
 }
 
-export default HighlightedPressable;
+export default PressableOpacity;

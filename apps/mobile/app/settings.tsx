@@ -2,7 +2,7 @@ import { ChevronRight, Sun, Hash, ChevronLeft } from 'lucide-react-native';
 import React from 'react';
 import { View, Text, SafeAreaView } from 'react-native';
 import colors from 'tailwindcss/colors';
-import HighlightedPressable from '../lib/components/HighlightedPressable';
+import HighlightedPressable from '../lib/components/PressableOpacity';
 import { router } from 'expo-router';
 
 function SettingsPage() {
