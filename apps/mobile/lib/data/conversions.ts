@@ -1,3 +1,8 @@
+import { Variable } from '../types';
+
+export const RE_CONVERSION =
+  /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)?(?<src>[a-zA-Z]+) +(to|in) (?<dest>[a-zA-Z]+)$/gm;
+
 export const meter = ['meter', 'm', 'meters', 'metre', 'metres'];
 export const centimeter = ['centimeter', 'cm', 'centimeters', 'centimetre', 'centimetres'];
 export const millimeter = ['millimeter', 'mm', 'millimeters', 'millimetre', 'millimetres'];
@@ -40,7 +45,7 @@ const units = {
   mile,
 };
 
-export function determineUnitType(input: string): keyof typeof conversionFactors | undefined {
+function determineUnitType(input: string): keyof typeof conversionFactors | undefined {
   for (const [unitType, values] of Object.entries(conversionFactors)) {
     if (Object.keys(values).includes(input)) {
       return unitType as keyof typeof conversionFactors;
@@ -48,10 +53,43 @@ export function determineUnitType(input: string): keyof typeof conversionFactors
   }
 }
 
-export function determineUnit(input: string): keyof typeof units | undefined {
+function determineUnit(input: string): keyof typeof units | undefined {
   for (const [unit, values] of Object.entries(units)) {
     if (values.includes(input)) {
       return unit as keyof typeof units;
     }
+  }
+}
+
+export function tokenizeConversion(input: string, variables: Variable[]) {
+  const groups = RE_CONVERSION.exec(input)?.groups;
+  const struct: { num: number; src: string; dest: string } = { num: 0, src: '', dest: '' };
+
+  if (!groups) return null;
+
+  if (variables.find((v) => v.name === groups?.src)) {
+    struct.num = variables.find((v) => v.name === groups?.src)?.value as number;
+  }
+
+  struct.dest = groups.dest;
+  struct.src = groups.src;
+  struct.num = typeof groups.num === 'string' ? parseFloat(groups.num.replace(',', '')) : 0;
+
+  return struct;
+}
+
+export function evalConversion(tokens: { num: number; src: string; dest: string }) {
+  const { num, src, dest } = tokens;
+  const sourceUnit = determineUnit(src);
+  const destinationUnit = determineUnit(dest);
+  const sourceUnitType = determineUnitType(sourceUnit as string);
+  const destinationUnitType = determineUnitType(destinationUnit as string);
+  if (sourceUnit && destinationUnit && sourceUnitType && sourceUnitType === destinationUnitType) {
+    const factor =
+      conversionFactors[sourceUnitType][destinationUnit] /
+      conversionFactors[sourceUnitType][sourceUnit];
+    return num * factor;
+  } else {
+    return 0;
   }
 }
