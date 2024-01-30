@@ -1,0 +1,66 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "f51532a9-56a0-448a-ae4c-e23d7c9ba8f9",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "rates": {
+      "name": "rates",
+      "columns": {
+        "sourceCurrency": {
+          "name": "sourceCurrency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "targetCurrency": {
+          "name": "targetCurrency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "rate": {
+          "name": "rate",
+          "type": "decimal(15,2)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "rates_sourceCurrency_targetCurrency_pk": {
+          "name": "rates_sourceCurrency_targetCurrency_pk",
+          "columns": [
+            "sourceCurrency",
+            "targetCurrency"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}
