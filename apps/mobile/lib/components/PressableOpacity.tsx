@@ -5,7 +5,7 @@ import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type Props = {
-  children: ReactNode[];
+  children: ReactNode | ReactNode[];
   className?: string;
   onPress: () => void;
 };

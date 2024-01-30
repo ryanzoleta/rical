@@ -8,13 +8,14 @@ import {
   View,
   useColorScheme,
 } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { twMerge } from 'tailwind-merge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { evaluate, isAssignment, isComment } from '../lib/evaluate';
 import { Variable, Result } from '../lib/types';
 import { Calculator, Cog, Keyboard } from 'lucide-react-native';
 import colors from 'tailwindcss/colors';
+import PressableOpacity from '../lib/components/PressableOpacity';
 
 function formatInput(text: string) {
   const texts = [];
@@ -97,9 +98,13 @@ export default function HomeScreen() {
       className={twMerge('min-h-screen', mode === 'dark' ? 'bg-zinc-900' : 'bg-zinc-100')}
     >
       <View className="flex-row justify-between p-3">
-        <Link href="/settings">
+        <PressableOpacity
+          onPress={() => {
+            router.push('/settings');
+          }}
+        >
           <Cog color={colors.zinc[500]} />
-        </Link>
+        </PressableOpacity>
 
         <Text
           className={twMerge(
@@ -110,7 +115,7 @@ export default function HomeScreen() {
           Rical
         </Text>
 
-        <Pressable
+        <PressableOpacity
           onPress={() => {
             setKeyboardType(keyboardType === 'numeric' ? 'default' : 'numeric');
           }}
@@ -120,7 +125,7 @@ export default function HomeScreen() {
           ) : (
             <Calculator color={colors.zinc[500]} />
           )}
-        </Pressable>
+        </PressableOpacity>
       </View>
 
       <View>
