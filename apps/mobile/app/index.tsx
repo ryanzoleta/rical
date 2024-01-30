@@ -8,6 +8,7 @@ import {
   View,
   useColorScheme,
 } from 'react-native';
+import { Link } from 'expo-router';
 import { twMerge } from 'tailwind-merge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { evaluate, isAssignment, isComment } from '../lib/evaluate';
@@ -96,7 +97,9 @@ export default function HomeScreen() {
       className={twMerge('min-h-screen', mode === 'dark' ? 'bg-zinc-900' : 'bg-zinc-100')}
     >
       <View className="flex-row justify-between p-3">
-        <Cog color={colors.zinc[500]} />
+        <Link href="/settings">
+          <Cog color={colors.zinc[500]} />
+        </Link>
 
         <Text
           className={twMerge(
