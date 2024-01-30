@@ -3,25 +3,20 @@ import { useFonts } from 'expo-font';
 import colors from 'tailwindcss/colors';
 import '../global.css';
 
-import React, { useEffect, useState } from 'react';
-import { Appearance, ColorSchemeName, StatusBar, useColorScheme } from 'react-native';
+import React, { useEffect } from 'react';
+import { StatusBar } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useColorScheme } from 'nativewind';
 
 function RootLayoutView() {
-  const [colorScheme, setColorScheme] = useState<ColorSchemeName>(useColorScheme());
+  const { colorScheme, setColorScheme } = useColorScheme();
   const [fontsLoaded] = useFonts({
     JetBrainsMono: require('../assets/fonts/JetBrainsMono-Regular.ttf'),
   });
 
   useEffect(() => {
     AsyncStorage.getItem('colorScheme').then((value) => {
-      console.log('colorScheme from storage', value);
-      setColorScheme((value as ColorSchemeName) ?? 'light');
-      Appearance.setColorScheme(value as ColorSchemeName);
-    });
-
-    Appearance.addChangeListener((preferences) => {
-      setColorScheme(preferences.colorScheme);
+      setColorScheme(value as typeof colorScheme);
     });
   }, []);
 

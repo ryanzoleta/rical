@@ -1,13 +1,11 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { SafeAreaView, Text, TextInput, View, useColorScheme } from 'react-native';
+import { Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
-import { twMerge } from 'tailwind-merge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { evaluate, isAssignment, isComment } from '../lib/evaluate';
 import { Variable, Result } from '../lib/types';
 import { Calculator, Cog, Keyboard } from 'lucide-react-native';
 import colors from 'tailwindcss/colors';
-import PressableOpacity from '../lib/components/PressableOpacity';
 
 function formatInput(text: string) {
   const texts = [];
@@ -34,8 +32,6 @@ export default function HomeScreen() {
 
   const secondToTheLastInput = useRef<TextInput | null>(null);
   const focusedTextInput = useRef<TextInput | null>(null);
-
-  const mode = useColorScheme();
 
   useEffect(() => {
     AsyncStorage.getItem('inputs').then((value) => {
@@ -85,26 +81,19 @@ export default function HomeScreen() {
   }, [keyboardType]);
 
   return (
-    <SafeAreaView className={twMerge('min-h-screen')}>
+    <SafeAreaView className="min-h-screen">
       <View className="flex-row justify-between p-3">
-        <PressableOpacity
+        <Pressable
           onPress={() => {
             router.push('/settings');
           }}
         >
           <Cog color={colors.zinc[500]} />
-        </PressableOpacity>
+        </Pressable>
 
-        <Text
-          className={twMerge(
-            'text-center text-xl',
-            mode === 'dark' ? 'text-zinc-500' : 'text-zinc-900',
-          )}
-        >
-          Rical
-        </Text>
+        <Text className="text-center text-xl text-zinc-900 dark:text-zinc-500">Rical</Text>
 
-        <PressableOpacity
+        <Pressable
           onPress={() => {
             setKeyboardType(keyboardType === 'numeric' ? 'default' : 'numeric');
           }}
@@ -114,7 +103,7 @@ export default function HomeScreen() {
           ) : (
             <Calculator color={colors.zinc[500]} />
           )}
-        </PressableOpacity>
+        </Pressable>
       </View>
 
       <View>
@@ -124,10 +113,7 @@ export default function HomeScreen() {
               <TextInput
                 key={index}
                 ref={index === inputs.length - 2 ? secondToTheLastInput : null}
-                className={twMerge(
-                  'font-jetBrainsMono px-3 text-lg',
-                  mode === 'dark' ? 'text-zinc-100' : 'text-zinc-900',
-                )}
+                className="font-jetBrainsMono px-3 text-lg text-zinc-900 dark:text-zinc-100"
                 autoFocus
                 autoCapitalize="none"
                 keyboardType={keyboardType}

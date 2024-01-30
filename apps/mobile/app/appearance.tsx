@@ -1,71 +1,58 @@
 import React from 'react';
-import { Text, SafeAreaView, View, Appearance, ColorSchemeName } from 'react-native';
-import PressableOpacity from '../lib/components/PressableOpacity';
+import { Text, SafeAreaView, View, Pressable } from 'react-native';
 import { Check, ChevronLeft } from 'lucide-react-native';
 import colors from 'tailwindcss/colors';
 import { router } from 'expo-router';
-import PressableBackground from '../lib/components/PressableBackground';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useColorScheme } from 'nativewind';
 
 function ApperanceSetting() {
-  const colorScheme = Appearance.getColorScheme();
+  const { colorScheme, setColorScheme } = useColorScheme();
 
-  function updateColorScheme(mode: ColorSchemeName) {
-    Appearance.setColorScheme(mode);
+  function updateColorScheme(mode: typeof colorScheme) {
+    setColorScheme(mode);
     AsyncStorage.setItem('colorScheme', mode?.toString() ?? 'light');
     router.back();
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="gap-3">
       <View className="mt-1 flex-row justify-between">
-        <PressableOpacity className="flex-1 flex-row items-center" onPress={router.back}>
+        <Pressable
+          className="flex-1 flex-row items-center transition-opacity active:opacity-50"
+          onPress={router.back}
+        >
           <ChevronLeft color={colors.blue[500]} size={30} />
           <Text className="text-xl text-blue-500">Back</Text>
-        </PressableOpacity>
+        </Pressable>
 
-        <Text className="flex-1 text-center text-xl">Appearance</Text>
+        <Text className="flex-1 text-center text-xl dark:text-white">Appearance</Text>
 
         <View className="flex-1"></View>
       </View>
 
-      <View className="m-2 rounded-xl bg-white">
-        {/* <PressableBackground
-          className="flex-row justify-between rounded-t-xl border-b border-b-zinc-100 p-4"
-          defaultBackgrounrColor="white"
-          highlightBackgroundColor={colors.zinc[200]}
-          onPress={setSystem}
-        >
-          <Text className="text-xl ">System</Text>
-
-          {colorScheme === null && <Check color={colors.zinc[500]} />}
-        </PressableBackground> */}
-
-        <PressableBackground
-          className="flex-row justify-between border-b border-b-zinc-100 p-4"
-          defaultBackgrounrColor="white"
-          highlightBackgroundColor={colors.zinc[200]}
+      <View className="m-2 rounded-xl">
+        <Pressable
+          className="flex-row justify-between rounded-t-xl border-b border-b-zinc-100 bg-white p-4 transition-colors duration-300 active:bg-zinc-200 dark:border-b-zinc-700 dark:bg-zinc-800 dark:active:bg-zinc-700"
           onPress={() => {
             updateColorScheme('dark');
           }}
         >
-          <Text className="text-xl ">Dark</Text>
+          <Text className="text-xl dark:text-white">Dark</Text>
 
           {colorScheme === 'dark' && <Check color={colors.zinc[500]} />}
-        </PressableBackground>
+        </Pressable>
 
-        <PressableBackground
-          className="flex-row justify-between rounded-b-xl p-4"
-          defaultBackgrounrColor="white"
-          highlightBackgroundColor={colors.zinc[200]}
+        <Pressable
+          className="flex-row justify-between rounded-b-xl bg-white p-4 transition-colors duration-300 active:bg-zinc-200 dark:border-b-zinc-700 dark:bg-zinc-800 dark:active:bg-zinc-700"
           onPress={() => {
             updateColorScheme('light');
           }}
         >
-          <Text className="text-xl ">Light</Text>
+          <Text className="text-xl dark:text-white">Light</Text>
 
           {colorScheme === 'light' && <Check color={colors.zinc[500]} />}
-        </PressableBackground>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
