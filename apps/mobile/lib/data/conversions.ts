@@ -18,6 +18,21 @@ export const kilogram = ['kilogram', 'kg', 'kilograms'];
 export const ounce = ['ounce', 'oz', 'ounces'];
 export const pound = ['pound', 'lb', 'pounds'];
 
+export const milliliter = ['milliliter', 'ml', 'milliliters', 'millilitre', 'millilitres'];
+export const deciliter = ['deciliter', 'dl', 'deciliters', 'decilitre', 'decilitres'];
+export const liter = ['liter', 'l', 'liters', 'litre', 'litres'];
+export const gallon = ['gallon', 'gal', 'gallons'];
+export const quart = ['quart', 'qt', 'quarts'];
+export const pint = ['pint', 'pt', 'pints'];
+export const cup = ['cup', 'cups'];
+export const fluidOunce = ['fluid ounce', 'fl oz', 'fluid ounces'];
+export const tablespoon = ['tablespoon', 'tbsp', 'tablespoons'];
+export const teaspoon = ['teaspoon', 'tsp', 'teaspoons'];
+
+export const celsius = ['celsius', 'c'];
+export const fahrenheit = ['fahrenheit', 'f'];
+export const kelvin = ['kelvin', 'k'];
+
 export const conversionFactors = {
   length: {
     meter: 1,
@@ -36,6 +51,23 @@ export const conversionFactors = {
     ounce: 35.2739619,
     pound: 2.20462262,
   },
+  volume: {
+    milliliter: 1000000,
+    deciliter: 100000,
+    liter: 1000,
+    gallon: 0.264172052,
+    quart: 1.05668821,
+    pint: 2.11337642,
+    cup: 4.22675284,
+    fluidOunce: 33.8140227,
+    tablespoon: 67.6280454,
+    teaspoon: 202.884136,
+  },
+  temperature: {
+    celsius: 1,
+    fahrenheit: 33.8,
+    kelvin: 274.15,
+  },
 };
 
 const units = {
@@ -52,6 +84,19 @@ const units = {
   kilogram,
   ounce,
   pound,
+  milliliter,
+  deciliter,
+  liter,
+  gallon,
+  quart,
+  pint,
+  cup,
+  fluidOunce,
+  tablespoon,
+  teaspoon,
+  celsius,
+  fahrenheit,
+  kelvin,
 };
 
 function determineUnitType(input: string): keyof typeof conversionFactors | undefined {
@@ -62,9 +107,7 @@ function determineUnitType(input: string): keyof typeof conversionFactors | unde
   }
 }
 
-function determineUnit(
-  input: string,
-): keyof typeof conversionFactors.length | keyof typeof conversionFactors.mass | undefined {
+function determineUnit(input: string): keyof typeof units | undefined {
   for (const [unit, values] of Object.entries(units)) {
     if (values.includes(input)) {
       return unit as keyof typeof units;
