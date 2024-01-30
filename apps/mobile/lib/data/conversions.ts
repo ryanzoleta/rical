@@ -21,6 +21,14 @@ export const length = [
   ...yard,
   ...mile,
 ];
+
+export const milligram = ['milligram', 'mg', 'milligrams', 'milligramme', 'milligrammes'];
+export const gram = ['gram', 'g', 'grams'];
+export const kilogram = ['kilogram', 'kg', 'kilograms'];
+export const ounce = ['ounce', 'oz', 'ounces'];
+export const pound = ['pound', 'lb', 'pounds'];
+export const mass = [...milligram, ...gram, ...kilogram, ...ounce, ...pound];
+
 export const conversionFactors = {
   length: {
     meter: 1,
@@ -31,6 +39,13 @@ export const conversionFactors = {
     foot: 3.2808399,
     yard: 1.0936133,
     mile: 0.000621371192,
+  },
+  mass: {
+    milligram: 1000000,
+    gram: 1000,
+    kilogram: 1,
+    ounce: 35.2739619,
+    pound: 2.20462262,
   },
 };
 
@@ -43,6 +58,11 @@ const units = {
   foot,
   yard,
   mile,
+  milligram,
+  gram,
+  kilogram,
+  ounce,
+  pound,
 };
 
 function determineUnitType(input: string): keyof typeof conversionFactors | undefined {
@@ -53,7 +73,9 @@ function determineUnitType(input: string): keyof typeof conversionFactors | unde
   }
 }
 
-function determineUnit(input: string): keyof typeof units | undefined {
+function determineUnit(
+  input: string,
+): keyof typeof conversionFactors.length | keyof typeof conversionFactors.mass | undefined {
   for (const [unit, values] of Object.entries(units)) {
     if (values.includes(input)) {
       return unit as keyof typeof units;
@@ -86,7 +108,9 @@ export function evalConversion(tokens: { num: number; src: string; dest: string 
   const destinationUnitType = determineUnitType(destinationUnit as string);
   if (sourceUnit && destinationUnit && sourceUnitType && sourceUnitType === destinationUnitType) {
     const factor =
+      //@ts-ignore
       conversionFactors[sourceUnitType][destinationUnit] /
+      //@ts-ignore
       conversionFactors[sourceUnitType][sourceUnit];
     return num * factor;
   } else {
