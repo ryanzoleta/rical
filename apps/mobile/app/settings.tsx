@@ -40,7 +40,9 @@ function SettingsPage() {
 
         <Pressable
           className="mx-2 flex-row items-center justify-between rounded-lg bg-white p-4 transition-colors duration-300 dark:bg-zinc-800 dark:active:bg-zinc-700"
-          onPress={() => {}}
+          onPress={() => {
+            router.push('/precision');
+          }}
         >
           <View className="flex-row gap-2">
             <Hash color={colorScheme === 'dark' ? colors.zinc[200] : colors.zinc[400]} />
