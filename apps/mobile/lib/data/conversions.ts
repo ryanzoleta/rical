@@ -97,8 +97,10 @@ export function evalConversion(tokens: { num: number; src: string; dest: string 
   const destinationUnitType = determineUnitType(destinationUnit as string);
   if (sourceUnit && destinationUnit && sourceUnitType && sourceUnitType === destinationUnitType) {
     const factor =
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       conversionFactors[sourceUnitType][destinationUnit] /
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       conversionFactors[sourceUnitType][sourceUnit];
     return num * factor;
