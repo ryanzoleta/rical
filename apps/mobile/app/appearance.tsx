@@ -1,12 +1,21 @@
 import React from 'react';
-import { Text, SafeAreaView, View } from 'react-native';
+import { Text, SafeAreaView, View, Appearance, ColorSchemeName } from 'react-native';
 import PressableOpacity from '../lib/components/PressableOpacity';
 import { Check, ChevronLeft } from 'lucide-react-native';
 import colors from 'tailwindcss/colors';
 import { router } from 'expo-router';
 import PressableBackground from '../lib/components/PressableBackground';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ApperanceSetting() {
+  const colorScheme = Appearance.getColorScheme();
+
+  function updateColorScheme(mode: ColorSchemeName) {
+    Appearance.setColorScheme(mode);
+    AsyncStorage.setItem('colorScheme', mode?.toString() ?? 'light');
+    router.back();
+  }
+
   return (
     <SafeAreaView>
       <View className="mt-1 flex-row justify-between">
@@ -21,32 +30,41 @@ function ApperanceSetting() {
       </View>
 
       <View className="m-2 rounded-xl bg-white">
-        <PressableBackground
-          className="flex-row justify-between border-b border-b-zinc-100 p-4"
+        {/* <PressableBackground
+          className="flex-row justify-between rounded-t-xl border-b border-b-zinc-100 p-4"
           defaultBackgrounrColor="white"
           highlightBackgroundColor={colors.zinc[200]}
-          onPress={() => {}}
+          onPress={setSystem}
         >
           <Text className="text-xl ">System</Text>
-          <Check color={colors.zinc[500]} />
-        </PressableBackground>
+
+          {colorScheme === null && <Check color={colors.zinc[500]} />}
+        </PressableBackground> */}
 
         <PressableBackground
           className="flex-row justify-between border-b border-b-zinc-100 p-4"
           defaultBackgrounrColor="white"
           highlightBackgroundColor={colors.zinc[200]}
-          onPress={() => {}}
+          onPress={() => {
+            updateColorScheme('dark');
+          }}
         >
           <Text className="text-xl ">Dark</Text>
+
+          {colorScheme === 'dark' && <Check color={colors.zinc[500]} />}
         </PressableBackground>
 
         <PressableBackground
-          className="flex-row justify-between p-4"
+          className="flex-row justify-between rounded-b-xl p-4"
           defaultBackgrounrColor="white"
           highlightBackgroundColor={colors.zinc[200]}
-          onPress={() => {}}
+          onPress={() => {
+            updateColorScheme('light');
+          }}
         >
           <Text className="text-xl ">Light</Text>
+
+          {colorScheme === 'light' && <Check color={colors.zinc[500]} />}
         </PressableBackground>
       </View>
     </SafeAreaView>

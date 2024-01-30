@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { SafeAreaView, StatusBar, Text, TextInput, View, useColorScheme } from 'react-native';
+import { SafeAreaView, Text, TextInput, View, useColorScheme } from 'react-native';
 import { router } from 'expo-router';
 import { twMerge } from 'tailwind-merge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -36,7 +36,6 @@ export default function HomeScreen() {
   const focusedTextInput = useRef<TextInput | null>(null);
 
   const mode = useColorScheme();
-  StatusBar.setBarStyle(mode === 'dark' ? 'light-content' : 'dark-content');
 
   useEffect(() => {
     AsyncStorage.getItem('inputs').then((value) => {
@@ -86,9 +85,7 @@ export default function HomeScreen() {
   }, [keyboardType]);
 
   return (
-    <SafeAreaView
-      className={twMerge('min-h-screen', mode === 'dark' ? 'bg-zinc-900' : 'bg-zinc-100')}
-    >
+    <SafeAreaView className={twMerge('min-h-screen')}>
       <View className="flex-row justify-between p-3">
         <PressableOpacity
           onPress={() => {
@@ -129,7 +126,7 @@ export default function HomeScreen() {
                 ref={index === inputs.length - 2 ? secondToTheLastInput : null}
                 className={twMerge(
                   'font-jetBrainsMono px-3 text-lg',
-                  mode === 'dark' ? 'text-white' : 'text-black',
+                  mode === 'dark' ? 'text-zinc-100' : 'text-zinc-900',
                 )}
                 autoFocus
                 autoCapitalize="none"
