@@ -1,4 +1,5 @@
 // import { getLocales } from 'expo-localization';
+import { conversionFactors, determineUnit, determineUnitType } from './data/conversions';
 import { Result, Variable } from './types';
 
 export const RE_ASSIGN = /^([A-Za-z0-9]+)( *)=(.*)$/m;
@@ -25,6 +26,11 @@ export function evaluate(input: string, variables: Variable[]) {
     RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
     console.log('conversion tokens', tokens);
+    if (tokens) {
+      const result = evalConversion(tokens);
+      return { raw: result, formatted: result.toString() } as Result;
+    }
+
     return { raw: 'conv', formatted: JSON.stringify(tokens) } as Result;
   }
 
@@ -79,6 +85,7 @@ export function isComment(input: string) {
 }
 
 export function isConversion(input: string) {
+  RE_CONVERSION.lastIndex = 0;
   return RE_CONVERSION.test(input);
 }
 
@@ -219,5 +226,21 @@ function evalArithmetic(op1: number, op2: number, operator: Operator) {
       return op1 / op2;
     default:
       throw new Error(`unsupported operator ${operator}`);
+  }
+}
+
+function evalConversion(tokens: { num: number; src: string; dest: string }) {
+  const { num, src, dest } = tokens;
+  const sourceUnit = determineUnit(src);
+  const destinationUnit = determineUnit(dest);
+  const sourceUnitType = determineUnitType(sourceUnit as string);
+  const destinationUnitType = determineUnitType(destinationUnit as string);
+  if (sourceUnit && destinationUnit && sourceUnitType && sourceUnitType === destinationUnitType) {
+    const factor =
+      conversionFactors[sourceUnitType][destinationUnit] /
+      conversionFactors[sourceUnitType][sourceUnit];
+    return num * factor;
+  } else {
+    return 0;
   }
 }
