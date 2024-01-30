@@ -11,23 +11,12 @@ export const inch = ['inch', 'in', 'inches'];
 export const foot = ['foot', 'ft', 'feet'];
 export const yard = ['yard', 'yd', 'yards'];
 export const mile = ['mile', 'mi', 'miles'];
-export const length = [
-  ...meter,
-  ...centimeter,
-  ...millimeter,
-  ...kilometer,
-  ...inch,
-  ...foot,
-  ...yard,
-  ...mile,
-];
 
 export const milligram = ['milligram', 'mg', 'milligrams', 'milligramme', 'milligrammes'];
 export const gram = ['gram', 'g', 'grams'];
 export const kilogram = ['kilogram', 'kg', 'kilograms'];
 export const ounce = ['ounce', 'oz', 'ounces'];
 export const pound = ['pound', 'lb', 'pounds'];
-export const mass = [...milligram, ...gram, ...kilogram, ...ounce, ...pound];
 
 export const conversionFactors = {
   length: {
