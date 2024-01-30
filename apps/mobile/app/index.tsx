@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { evaluate, isAssignment, isComment } from '../lib/evaluate';
 import { Variable, Result } from '../lib/types';
@@ -27,11 +27,14 @@ export default function HomeScreen() {
   const [inputs, setInputs] = useState(['']);
   const [outputs, setOutputs] = useState<Result[]>([]);
   const [formattedInputs, setFormattedInputs] = useState<ReactNode[][]>([]);
+  const [precision, setPrecision] = useState(2);
   const [loaded, setLoaded] = useState(false);
   const [keyboardType, setKeyboardType] = useState<'numeric' | 'default'>('numeric');
 
   const secondToTheLastInput = useRef<TextInput | null>(null);
   const focusedTextInput = useRef<TextInput | null>(null);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     AsyncStorage.getItem('inputs').then((value) => {
@@ -39,6 +42,17 @@ export default function HomeScreen() {
       setInputs(list);
       setFormattedInputs(list.map(formatInput));
     });
+
+    AsyncStorage.getItem('precision').then((value) => {
+      setPrecision(parseInt(value ?? '2'));
+    });
+
+    navigation.addListener('focus', () => {
+      AsyncStorage.getItem('precision').then((value) => {
+        setPrecision(parseInt(value ?? '2'));
+      });
+    });
+
     setLoaded(true);
   }, []);
 
@@ -56,7 +70,7 @@ export default function HomeScreen() {
       if (input === '') {
         result = { raw: ' ', formatted: ' ' } as Result;
       } else if (isAssignment(input)) {
-        result = evaluate(input.split('=')[1].trim(), variables);
+        result = evaluate(input.split('=')[1].trim(), variables, precision);
         variables.push({
           name: input.split('=')[0].trim(),
           value: result.raw,
@@ -64,14 +78,14 @@ export default function HomeScreen() {
       } else if (isComment(input)) {
         result = { raw: ' ', formatted: ' ' } as Result;
       } else {
-        result = evaluate(input.trim(), variables);
+        result = evaluate(input.trim(), variables, precision);
       }
 
       perLineOutput.push(result);
     }
 
     setOutputs(perLineOutput);
-  }, [inputs]);
+  }, [inputs, precision]);
 
   useEffect(() => {
     if (focusedTextInput.current) {

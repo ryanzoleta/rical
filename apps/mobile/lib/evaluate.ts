@@ -9,7 +9,7 @@ export const RE_COMMENT = /^#(.*)$/m;
 const locales = getLocales();
 const locale = locales.slice(-1)[0].regionCode ?? 'US';
 
-export function evaluate(input: string, variables: Variable[]) {
+export function evaluate(input: string, variables: Variable[], precision: number) {
   if (isConversion(input)) {
     RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
@@ -18,7 +18,7 @@ export function evaluate(input: string, variables: Variable[]) {
       const result = evalConversion(tokens);
       return {
         raw: result[0],
-        formatted: formatNumber(result[0] as number) + ' ' + result[1],
+        formatted: formatNumber(result[0] as number, precision) + ' ' + result[1],
       } as Result;
     }
 
@@ -35,7 +35,7 @@ export function evaluate(input: string, variables: Variable[]) {
     console.log('error', e);
   }
 
-  return { raw: result, formatted: formatNumber(result) } as Result;
+  return { raw: result, formatted: formatNumber(result, precision) } as Result;
 }
 
 export function isAssignment(input: string) {
@@ -51,6 +51,6 @@ export function isConversion(input: string) {
   return RE_CONVERSION.test(input);
 }
 
-function formatNumber(value: number) {
-  return Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value);
+function formatNumber(value: number, precision: number) {
+  return Intl.NumberFormat(locale, { maximumFractionDigits: precision }).format(value);
 }

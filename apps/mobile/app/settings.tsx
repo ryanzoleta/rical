@@ -1,12 +1,27 @@
 import { ChevronRight, Sun, Hash, ChevronLeft } from 'lucide-react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, SafeAreaView, Pressable } from 'react-native';
 import colors from 'tailwindcss/colors';
-import { router } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import { useColorScheme } from 'nativewind';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function SettingsPage() {
+  const [precision, setPrecision] = useState(2);
   const { colorScheme } = useColorScheme();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    AsyncStorage.getItem('precision').then((value) => {
+      setPrecision(parseInt(value ?? '2'));
+    });
+
+    navigation.addListener('focus', () => {
+      AsyncStorage.getItem('precision').then((value) => {
+        setPrecision(parseInt(value ?? '2'));
+      });
+    });
+  }, []);
 
   return (
     <SafeAreaView className="flex-col gap-5">
@@ -50,7 +65,9 @@ function SettingsPage() {
           </View>
 
           <View className="flex-row items-center">
-            <Text className="text text-xl text-zinc-500">2 decimal points</Text>
+            <Text className="text text-xl text-zinc-500">
+              {precision !== 1 ? `${precision} decimal points` : '1 decimal point'}
+            </Text>
             <ChevronRight color={colorScheme === 'dark' ? colors.zinc[200] : colors.zinc[400]} />
           </View>
         </Pressable>
