@@ -18,7 +18,10 @@ export function evaluate(input: string, variables: Variable[]) {
     console.log('conversion tokens', tokens);
     if (tokens) {
       const result = evalConversion(tokens);
-      return { raw: result, formatted: formatNumber(result) } as Result;
+      return {
+        raw: result[0],
+        formatted: formatNumber(result[0] as number) + ' ' + result[1],
+      } as Result;
     }
 
     return { raw: 0, formatted: '0' } as Result;

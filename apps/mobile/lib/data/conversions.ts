@@ -266,8 +266,13 @@ export function evalConversion(tokens: { num: number; src: string; dest: string 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       conversionFactors[sourceUnitType][sourceUnit];
-    return num * factor;
+    return [num * factor, getShortestUnit(units[destinationUnit])];
   } else {
-    return 0;
+    return [0, ''];
   }
+}
+
+export function getShortestUnit(units: string[]) {
+  const shortest = units.reduce((a, b) => (a.length <= b.length ? a : b));
+  return shortest;
 }
