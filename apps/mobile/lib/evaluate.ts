@@ -10,8 +10,6 @@ const locales = getLocales();
 const locale = locales.slice(-1)[0].regionCode ?? 'US';
 
 export function evaluate(input: string, variables: Variable[]) {
-  // const formatType: FormatType = determineOutputFormat(input);
-
   if (isConversion(input)) {
     RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
@@ -39,35 +37,6 @@ export function evaluate(input: string, variables: Variable[]) {
 
   return { raw: result, formatted: formatNumber(result) } as Result;
 }
-
-// function determineOutputFormat(input: string): FormatType {
-//   if (isCurrency(input)) {
-//     return 'currency';
-//   }
-//   return 'regular-number';
-// }
-
-// function format(result: string | number, format: FormatType) {
-//   if (!result) {
-//     return;
-//   }
-
-//   switch (format) {
-//     case 'regular-number':
-//       if (typeof result === 'number') {
-//         return Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(result);
-//       }
-//     case 'currency':
-//       if (typeof result === 'number')
-//         return Intl.NumberFormat(locale, {
-//           currency: 'usd',
-//           style: 'currency',
-//           currencyDisplay: 'narrowSymbol',
-//           maximumFractionDigits: 2,
-//           minimumFractionDigits: 0,
-//         }).format(result);
-//   }
-// }
 
 export function isAssignment(input: string) {
   return RE_ASSIGN.test(input);
