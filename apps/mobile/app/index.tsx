@@ -1,14 +1,6 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import {
-  Pressable,
-  SafeAreaView,
-  StatusBar,
-  Text,
-  TextInput,
-  View,
-  useColorScheme,
-} from 'react-native';
-import { Link, router } from 'expo-router';
+import { SafeAreaView, StatusBar, Text, TextInput, View, useColorScheme } from 'react-native';
+import { router } from 'expo-router';
 import { twMerge } from 'tailwind-merge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { evaluate, isAssignment, isComment } from '../lib/evaluate';
