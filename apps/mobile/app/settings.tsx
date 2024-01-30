@@ -19,7 +19,9 @@ function SettingsPage() {
       <View className="gap-3">
         <PressableBackground
           className="mx-2 flex-row items-center justify-between rounded-lg bg-white p-4"
-          onPress={() => {}}
+          onPress={() => {
+            router.push('/appearance');
+          }}
           defaultBackgrounrColor="white"
           highlightBackgroundColor={colors.zinc[200]}
         >
