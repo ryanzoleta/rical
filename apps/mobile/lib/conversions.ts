@@ -26,9 +26,6 @@ export function evalConversion(tokens: ConversionTokens, rates: ExchangeRate) {
   const { num, src, dest } = tokens;
 
   if (areCurrencies(src, dest)) {
-    // const response = await axios.get<CurrencyConversionApiResponse>(
-    //   `http://localhost:5173/api/convert?value=${num}&from=${src}&to=${dest}`,
-    // );
     const currencyPair = `${src.toUpperCase()}${dest.toUpperCase()}`;
     const reverseCurrencyPair = `${dest.toUpperCase()}${src.toUpperCase()}`;
     let result = 0;
