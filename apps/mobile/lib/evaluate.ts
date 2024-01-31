@@ -9,13 +9,13 @@ export const RE_COMMENT = /^#(.*)$/m;
 const locales = getLocales();
 const locale = locales.slice(-1)[0].regionCode ?? 'US';
 
-export function evaluate(input: string, variables: Variable[], precision: number) {
+export async function evaluate(input: string, variables: Variable[], precision: number) {
   if (isConversion(input)) {
     RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
     console.log('conversion tokens', tokens);
     if (tokens) {
-      const result = evalConversion(tokens);
+      const result = await evalConversion(tokens);
       return {
         raw: result[0],
         formatted: formatNumber(result[0] as number, precision) + ' ' + result[1],

@@ -9,3 +9,10 @@ export type Result = {
 };
 
 export type FormatType = 'regular-number' | 'currency' | 'comment';
+
+export type CurrencyConversionApiResponse = {
+  value: number;
+  sourceCurrency: string;
+  targetCurrency: string;
+  result: number;
+};

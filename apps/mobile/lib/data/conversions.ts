@@ -1,4 +1,6 @@
-import { Variable } from '../types';
+import { CurrencyConversionApiResponse, Variable } from '../types';
+import { ALL_CURRENCIES } from './currencies';
+import axios from 'axios';
 
 export const RE_CONVERSION =
   /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)?(?<src>[a-zA-Z]+) +(to|in) (?<dest>[a-zA-Z]+)$/gm;
@@ -235,6 +237,15 @@ function determineUnit(input: string): keyof typeof units | undefined {
   }
 }
 
+function areCurrencies(str1: string, str2: string) {
+  return (
+    (ALL_CURRENCIES.map((c) => c.code).includes(str1.toUpperCase()) ||
+      ALL_CURRENCIES.map((c) => c.symbol).includes(str1.toUpperCase())) &&
+    (ALL_CURRENCIES.map((c) => c.code).includes(str2.toUpperCase()) ||
+      ALL_CURRENCIES.map((c) => c.symbol).includes(str2.toUpperCase()))
+  );
+}
+
 export function tokenizeConversion(input: string, variables: Variable[]) {
   const groups = RE_CONVERSION.exec(input)?.groups;
   const struct: { num: number; src: string; dest: string } = { num: 0, src: '', dest: '' };
@@ -252,8 +263,17 @@ export function tokenizeConversion(input: string, variables: Variable[]) {
   return struct;
 }
 
-export function evalConversion(tokens: { num: number; src: string; dest: string }) {
+export async function evalConversion(tokens: { num: number; src: string; dest: string }) {
   const { num, src, dest } = tokens;
+
+  if (areCurrencies(src, dest)) {
+    const response = await axios.get<CurrencyConversionApiResponse>(
+      `http://localhost:5173/api/convert?value=${num}&from=${src}&to=${dest}`,
+    );
+
+    return [response.data.result, dest.toUpperCase()];
+  }
+
   const sourceUnit = determineUnit(src);
   const destinationUnit = determineUnit(dest);
   const sourceUnitType = determineUnitType(sourceUnit as string);

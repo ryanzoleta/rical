@@ -61,6 +61,10 @@ export default function HomeScreen() {
   }, [inputs]);
 
   useEffect(() => {
+    evaluateInputs();
+  }, [inputs, precision]);
+
+  async function evaluateInputs() {
     const perLineOutput: Result[] = [];
     const variables: Variable[] = [];
 
@@ -70,7 +74,7 @@ export default function HomeScreen() {
       if (input === '') {
         result = { raw: ' ', formatted: ' ' } as Result;
       } else if (isAssignment(input)) {
-        result = evaluate(input.split('=')[1].trim(), variables, precision);
+        result = await evaluate(input.split('=')[1].trim(), variables, precision);
         variables.push({
           name: input.split('=')[0].trim(),
           value: result.raw,
@@ -78,14 +82,14 @@ export default function HomeScreen() {
       } else if (isComment(input)) {
         result = { raw: ' ', formatted: ' ' } as Result;
       } else {
-        result = evaluate(input.trim(), variables, precision);
+        result = await evaluate(input.trim(), variables, precision);
       }
 
       perLineOutput.push(result);
     }
 
     setOutputs(perLineOutput);
-  }, [inputs, precision]);
+  }
 
   useEffect(() => {
     if (focusedTextInput.current) {
