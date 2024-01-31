@@ -26,3 +26,8 @@ export type ConversionTokens = {
   src: string;
   dest: string;
 };
+
+export type StoredRates = {
+  updatedAt: Date;
+  rates: ExchangeRate;
+};
