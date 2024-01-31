@@ -23,7 +23,10 @@ export async function GET(event: RequestEvent) {
         and(eq(rates.sourceCurrency, sourceCurrency), eq(rates.targetCurrency, targetCurrency)),
       );
 
-    if (results.length === 0 || moment().diff(moment(results[0].updatedAt), 'days') > 1) {
+    if (
+      results.length === 0 ||
+      moment().diff(moment(results[0].updatedAt), 'days') > parseInt(env.MAX_RATES_AGE)
+    ) {
       await db.delete(rates).where(eq(rates.sourceCurrency, sourceCurrency));
       await insertAll(await retrieveLatestRates(sourceCurrency));
 
