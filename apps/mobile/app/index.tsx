@@ -6,6 +6,7 @@ import { evaluate, isAssignment, isComment } from '../lib/evaluate';
 import { Variable, Result, ExchangeRate } from '../lib/types';
 import { Calculator, Cog, Keyboard } from 'lucide-react-native';
 import colors from 'tailwindcss/colors';
+import axios from 'axios';
 
 function formatInput(text: string) {
   const texts = [];
@@ -54,9 +55,15 @@ export default function HomeScreen() {
       });
     });
 
-    setRates({
-      USDPHP: 56.29,
-      USDEUR: 0.92,
+    AsyncStorage.getItem('rates').then((value) => {
+      if (value) {
+        setRates(JSON.parse(value));
+      } else {
+        axios.get('http://localhost:5173/api/rates').then((response) => {
+          AsyncStorage.setItem('rates', JSON.stringify(response.data));
+          setRates(response.data);
+        });
+      }
     });
 
     setLoaded(true);
