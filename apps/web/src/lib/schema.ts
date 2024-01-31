@@ -15,3 +15,5 @@ export const rates = mysqlTable(
     };
   },
 );
+
+export type Rates = typeof rates.$inferSelect;
