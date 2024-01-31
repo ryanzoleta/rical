@@ -39,31 +39,33 @@ export default function HomeScreen() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    AsyncStorage.getItem('inputs').then((value) => {
-      const list = JSON.parse(value ?? '[""]') as typeof inputs;
+    Promise.all([
+      AsyncStorage.getItem('inputs'),
+      AsyncStorage.getItem('precision'),
+      AsyncStorage.getItem('rates'),
+    ]).then(([inputsValue, precisionValue, ratesValue]) => {
+      const list = JSON.parse(inputsValue ?? '[""]') as typeof inputs;
       setInputs(list);
       setFormattedInputs(list.map(formatInput));
-    });
 
-    AsyncStorage.getItem('precision').then((value) => {
-      setPrecision(parseInt(value ?? '2'));
+      setPrecision(parseInt(precisionValue ?? '2'));
+
+      if (ratesValue) {
+        setRates(JSON.parse(ratesValue));
+        evaluateInputs();
+      } else {
+        axios.get('http://localhost:5173/api/rates').then((response) => {
+          AsyncStorage.setItem('rates', JSON.stringify(response.data));
+          setRates(response.data);
+          evaluateInputs();
+        });
+      }
     });
 
     navigation.addListener('focus', () => {
       AsyncStorage.getItem('precision').then((value) => {
         setPrecision(parseInt(value ?? '2'));
       });
-    });
-
-    AsyncStorage.getItem('rates').then((value) => {
-      if (value) {
-        setRates(JSON.parse(value));
-      } else {
-        axios.get('http://localhost:5173/api/rates').then((response) => {
-          AsyncStorage.setItem('rates', JSON.stringify(response.data));
-          setRates(response.data);
-        });
-      }
     });
 
     setLoaded(true);
