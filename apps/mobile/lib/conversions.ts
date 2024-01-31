@@ -1,6 +1,5 @@
-import { ConversionTokens, CurrencyConversionApiResponse, Variable } from './types';
+import { ConversionTokens, ExchangeRate, Variable } from './types';
 import { ALL_CURRENCIES } from './data/currencies';
-import axios from 'axios';
 import { conversionFactors, units } from './data/measurements';
 
 export const RE_CONVERSION =
@@ -23,15 +22,25 @@ export function tokenizeConversion(input: string, variables: Variable[]) {
   return struct as ConversionTokens;
 }
 
-export async function evalConversion(tokens: ConversionTokens) {
+export function evalConversion(tokens: ConversionTokens, rates: ExchangeRate) {
   const { num, src, dest } = tokens;
 
   if (areCurrencies(src, dest)) {
-    const response = await axios.get<CurrencyConversionApiResponse>(
-      `http://localhost:5173/api/convert?value=${num}&from=${src}&to=${dest}`,
-    );
+    // const response = await axios.get<CurrencyConversionApiResponse>(
+    //   `http://localhost:5173/api/convert?value=${num}&from=${src}&to=${dest}`,
+    // );
+    const currencyPair = `${src.toUpperCase()}${dest.toUpperCase()}`;
+    const reverseCurrencyPair = `${dest.toUpperCase()}${src.toUpperCase()}`;
+    let result = 0;
+    if (rates[currencyPair]) {
+      result = rates[currencyPair] * num;
+    } else if (rates[reverseCurrencyPair]) {
+      result = num / rates[reverseCurrencyPair];
+    } else {
+      return [num, src.toUpperCase()];
+    }
 
-    return [response.data.result, dest.toUpperCase()];
+    return [result, dest.toUpperCase()];
   }
 
   const sourceUnit = determineUnit(src);

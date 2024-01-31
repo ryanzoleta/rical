@@ -10,6 +10,10 @@ export type Result = {
 
 export type FormatType = 'regular-number' | 'currency' | 'comment';
 
+export type ExchangeRate = {
+  [currency: string]: number;
+};
+
 export type CurrencyConversionApiResponse = {
   value: number;
   sourceCurrency: string;

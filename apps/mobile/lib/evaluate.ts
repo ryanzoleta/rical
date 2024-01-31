@@ -1,7 +1,7 @@
 import { getLocales } from 'expo-localization';
 import { tokenizeArithmetic, shuntingYard, evaluateRpn } from './arithmetic';
 import { RE_CONVERSION, evalConversion, tokenizeConversion } from './conversions';
-import { Result, Variable } from './types';
+import { ExchangeRate, Result, Variable } from './types';
 
 export const RE_ASSIGN = /^([A-Za-z0-9]+)( *)=(.*)$/m;
 export const RE_COMMENT = /^#(.*)$/m;
@@ -9,13 +9,18 @@ export const RE_COMMENT = /^#(.*)$/m;
 const locales = getLocales();
 const locale = locales.slice(-1)[0].regionCode ?? 'US';
 
-export async function evaluate(input: string, variables: Variable[], precision: number) {
+export function evaluate(
+  input: string,
+  variables: Variable[],
+  rates: ExchangeRate,
+  precision: number,
+) {
   if (isConversion(input)) {
     RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
     console.log('conversion tokens', tokens);
     if (tokens) {
-      const result = await evalConversion(tokens);
+      const result = evalConversion(tokens, rates);
       return {
         raw: result[0],
         formatted: formatNumber(result[0] as number, precision) + ' ' + result[1],

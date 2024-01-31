@@ -3,7 +3,7 @@ import { Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
 import { router, useNavigation } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { evaluate, isAssignment, isComment } from '../lib/evaluate';
-import { Variable, Result } from '../lib/types';
+import { Variable, Result, ExchangeRate } from '../lib/types';
 import { Calculator, Cog, Keyboard } from 'lucide-react-native';
 import colors from 'tailwindcss/colors';
 
@@ -30,6 +30,7 @@ export default function HomeScreen() {
   const [precision, setPrecision] = useState(2);
   const [loaded, setLoaded] = useState(false);
   const [keyboardType, setKeyboardType] = useState<'numeric' | 'default'>('numeric');
+  const [rates, setRates] = useState<ExchangeRate>({});
 
   const secondToTheLastInput = useRef<TextInput | null>(null);
   const focusedTextInput = useRef<TextInput | null>(null);
@@ -53,6 +54,11 @@ export default function HomeScreen() {
       });
     });
 
+    setRates({
+      USDPHP: 56.29,
+      USDEUR: 0.92,
+    });
+
     setLoaded(true);
   }, []);
 
@@ -61,10 +67,10 @@ export default function HomeScreen() {
   }, [inputs]);
 
   useEffect(() => {
-    evaluateInputs();
+    if (rates) evaluateInputs();
   }, [inputs, precision]);
 
-  async function evaluateInputs() {
+  function evaluateInputs() {
     const perLineOutput: Result[] = [];
     const variables: Variable[] = [];
 
@@ -74,7 +80,7 @@ export default function HomeScreen() {
       if (input === '') {
         result = { raw: ' ', formatted: ' ' } as Result;
       } else if (isAssignment(input)) {
-        result = await evaluate(input.split('=')[1].trim(), variables, precision);
+        result = evaluate(input.split('=')[1].trim(), variables, rates, precision);
         variables.push({
           name: input.split('=')[0].trim(),
           value: result.raw,
@@ -82,7 +88,7 @@ export default function HomeScreen() {
       } else if (isComment(input)) {
         result = { raw: ' ', formatted: ' ' } as Result;
       } else {
-        result = await evaluate(input.trim(), variables, precision);
+        result = evaluate(input.trim(), variables, rates, precision);
       }
 
       perLineOutput.push(result);
