@@ -16,3 +16,9 @@ export type CurrencyConversionApiResponse = {
   targetCurrency: string;
   result: number;
 };
+
+export type ConversionTokens = {
+  num: number;
+  src: string;
+  dest: string;
+};

@@ -1,6 +1,6 @@
 import { getLocales } from 'expo-localization';
 import { tokenizeArithmetic, shuntingYard, evaluateRpn } from './arithmetic';
-import { RE_CONVERSION, evalConversion, tokenizeConversion } from './data/conversions';
+import { RE_CONVERSION, evalConversion, tokenizeConversion } from './conversions';
 import { Result, Variable } from './types';
 
 export const RE_ASSIGN = /^([A-Za-z0-9]+)( *)=(.*)$/m;

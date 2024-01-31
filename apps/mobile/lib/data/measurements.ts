@@ -1,10 +1,3 @@
-import { CurrencyConversionApiResponse, Variable } from '../types';
-import { ALL_CURRENCIES } from './currencies';
-import axios from 'axios';
-
-export const RE_CONVERSION =
-  /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)?(?<src>[a-zA-Z]+) +(to|in) (?<dest>[a-zA-Z]+)$/gm;
-
 export const meter = ['meter', 'm', 'meters', 'metre', 'metres'];
 export const centimeter = ['centimeter', 'cm', 'centimeters', 'centimetre', 'centimetres'];
 export const millimeter = ['millimeter', 'mm', 'millimeters', 'millimetre', 'millimetres'];
@@ -159,7 +152,7 @@ export const conversionFactors = {
   },
 };
 
-const units = {
+export const units = {
   meter,
   centimeter,
   millimeter,
@@ -220,79 +213,3 @@ const units = {
   watt_hour,
   kilowatt_hour,
 };
-
-function determineUnitType(input: string): keyof typeof conversionFactors | undefined {
-  for (const [unitType, values] of Object.entries(conversionFactors)) {
-    if (Object.keys(values).includes(input)) {
-      return unitType as keyof typeof conversionFactors;
-    }
-  }
-}
-
-function determineUnit(input: string): keyof typeof units | undefined {
-  for (const [unit, values] of Object.entries(units)) {
-    if (values.includes(input)) {
-      return unit as keyof typeof units;
-    }
-  }
-}
-
-function areCurrencies(str1: string, str2: string) {
-  return (
-    (ALL_CURRENCIES.map((c) => c.code).includes(str1.toUpperCase()) ||
-      ALL_CURRENCIES.map((c) => c.symbol).includes(str1.toUpperCase())) &&
-    (ALL_CURRENCIES.map((c) => c.code).includes(str2.toUpperCase()) ||
-      ALL_CURRENCIES.map((c) => c.symbol).includes(str2.toUpperCase()))
-  );
-}
-
-export function tokenizeConversion(input: string, variables: Variable[]) {
-  const groups = RE_CONVERSION.exec(input)?.groups;
-  const struct: { num: number; src: string; dest: string } = { num: 0, src: '', dest: '' };
-
-  if (!groups) return null;
-
-  if (variables.find((v) => v.name === groups?.src)) {
-    struct.num = variables.find((v) => v.name === groups?.src)?.value as number;
-  }
-
-  struct.dest = groups.dest;
-  struct.src = groups.src;
-  struct.num = typeof groups.num === 'string' ? parseFloat(groups.num.replace(',', '')) : 0;
-
-  return struct;
-}
-
-export async function evalConversion(tokens: { num: number; src: string; dest: string }) {
-  const { num, src, dest } = tokens;
-
-  if (areCurrencies(src, dest)) {
-    const response = await axios.get<CurrencyConversionApiResponse>(
-      `http://localhost:5173/api/convert?value=${num}&from=${src}&to=${dest}`,
-    );
-
-    return [response.data.result, dest.toUpperCase()];
-  }
-
-  const sourceUnit = determineUnit(src);
-  const destinationUnit = determineUnit(dest);
-  const sourceUnitType = determineUnitType(sourceUnit as string);
-  const destinationUnitType = determineUnitType(destinationUnit as string);
-  if (sourceUnit && destinationUnit && sourceUnitType && sourceUnitType === destinationUnitType) {
-    const factor =
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
-      conversionFactors[sourceUnitType][destinationUnit] /
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
-      conversionFactors[sourceUnitType][sourceUnit];
-    return [num * factor, getShortestUnit(units[destinationUnit])];
-  } else {
-    return [0, ''];
-  }
-}
-
-export function getShortestUnit(units: string[]) {
-  const shortest = units.reduce((a, b) => (a.length <= b.length ? a : b));
-  return shortest;
-}
