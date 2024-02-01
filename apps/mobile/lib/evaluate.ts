@@ -1,6 +1,6 @@
 import { getLocales } from 'expo-localization';
 import { tokenizeArithmetic, shuntingYard, evaluateRpn } from './arithmetic';
-import { RE_CONVERSION, evalConversion, tokenizeConversion } from './conversions';
+import { RE_CONVERSION, evalConversion, isCurrency, tokenizeConversion } from './conversions';
 import { ExchangeRate, Result, Variable } from './types';
 
 export const RE_ASSIGN = /^([A-Za-z0-9]+)( *)=(.*)$/m;
@@ -38,6 +38,14 @@ export function evaluate(
     result = evaluateRpn(rpn);
   } catch (e) {
     console.log('error', e);
+  }
+
+  const lastToken = tokens.slice(-1)[0];
+  if (lastToken && isCurrency(lastToken.toString())) {
+    return {
+      raw: result,
+      formatted: formatNumber(result, precision) + ' ' + lastToken,
+    } as Result;
   }
 
   return { raw: result, formatted: formatNumber(result, precision) } as Result;

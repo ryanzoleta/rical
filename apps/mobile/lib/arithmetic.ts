@@ -1,3 +1,4 @@
+import { isCurrency } from './conversions';
 import { Variable } from './types';
 
 const RE_OPERATORS = /(?<operator>\+|-|\*|\/)/m;
@@ -16,7 +17,11 @@ export function tokenizeArithmetic(input: string, variables: Variable[]) {
       matches.push(match[0]);
     } else if (match?.groups && match.groups['var']) {
       const token = match[0] as string;
-      matches.push(variables.find((v) => v.name === token)?.value as number);
+      if (isCurrency(token)) {
+        matches.push(token.toUpperCase());
+      } else {
+        matches.push(variables.find((v) => v.name === token)?.value as number);
+      }
     }
   }
 

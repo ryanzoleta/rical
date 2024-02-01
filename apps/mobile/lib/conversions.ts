@@ -74,6 +74,13 @@ function determineUnit(input: string): keyof typeof units | undefined {
   }
 }
 
+export function isCurrency(str: string) {
+  return (
+    ALL_CURRENCIES.map((c) => c.code).includes(str.toUpperCase()) ||
+    ALL_CURRENCIES.map((c) => c.symbol).includes(str.toUpperCase())
+  );
+}
+
 function areCurrencies(str1: string, str2: string) {
   return (
     (ALL_CURRENCIES.map((c) => c.code).includes(str1.toUpperCase()) ||
