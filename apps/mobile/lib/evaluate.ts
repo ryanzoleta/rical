@@ -10,7 +10,7 @@ import {
 } from './conversions';
 import { ExchangeRate, Result, Variable } from './types';
 
-export const RE_ASSIGN = /^([A-Za-z0-9]+)( *)=(.*)$/m;
+export const RE_ASSIGN = /^([A-Za-z0-9_]+)( *)=(.*)$/m;
 export const RE_COMMENT = /^#(.*)$/m;
 
 const locales = getLocales();

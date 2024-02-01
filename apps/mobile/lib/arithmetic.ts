@@ -3,7 +3,7 @@ import { Variable } from './types';
 
 const RE_OPERATORS = /(?<operator>\+|-|\*|\/)/m;
 const RE_ARITHMETIC =
-  /(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/)|(?<paren>\(|\))|(?<var>[A-Za-z0-9]+)/gm;
+  /(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/)|(?<paren>\(|\))|(?<var>[A-Za-z0-9_]+)/gm;
 type Operator = '+' | '-' | '*' | '/';
 
 export function tokenizeArithmetic(
