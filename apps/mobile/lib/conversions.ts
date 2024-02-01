@@ -3,7 +3,7 @@ import { ALL_CURRENCIES } from './data/currencies';
 import { conversionFactors, units } from './data/measurements';
 
 export const RE_CONVERSION =
-  /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)?(?<src>[a-zA-Z]+) +(to|in) (?<dest>[a-zA-Z]+)$/gm;
+  /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)?(?<src>[a-zA-Z0-9_]+) +(to|in) (?<dest>[a-zA-Z]+)$/gm;
 
 export function tokenizeConversion(input: string, variables: Variable[]) {
   const groups = RE_CONVERSION.exec(input)?.groups;

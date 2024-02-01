@@ -97,6 +97,7 @@ export function format(result: Result, precision: number) {
   } else if (result.formatType === 'currency') {
     return (
       Intl.NumberFormat(locale, {
+        minimumFractionDigits: precision,
         maximumFractionDigits: precision,
       }).format(result.raw as number) +
       ' ' +
