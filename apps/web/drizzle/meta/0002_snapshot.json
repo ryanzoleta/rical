@@ -1,0 +1,58 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "3375028f-2203-4cc1-9eaa-d55fbc1c78d3",
+  "prevId": "96c883f6-78db-474e-9e4b-64a82972aed6",
+  "tables": {
+    "rates": {
+      "name": "rates",
+      "columns": {
+        "currency": {
+          "name": "currency",
+          "type": "varchar(5)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "rate": {
+          "name": "rate",
+          "type": "decimal(30,20)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "rates_currency": {
+          "name": "rates_currency",
+          "columns": [
+            "currency"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

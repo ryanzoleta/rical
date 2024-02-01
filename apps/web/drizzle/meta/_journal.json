@@ -15,6 +15,13 @@
       "when": 1706634035750,
       "tag": "0001_demonic_psylocke",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1706792643195,
+      "tag": "0002_wonderful_lizard",
+      "breakpoints": true
     }
   ]
 }
