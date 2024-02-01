@@ -12,7 +12,7 @@ export function tokenizeConversion(input: string, variables: Variable[]) {
   if (!groups) return null;
 
   if (variables.find((v) => v.name === groups?.src)) {
-    struct.num = variables.find((v) => v.name === groups?.src)?.value as number;
+    struct.num = variables.find((v) => v.name === groups?.src)?.value.raw as number;
   }
 
   struct.dest = groups.dest;

@@ -1,14 +1,15 @@
 export type Variable = {
   name: string;
-  value: number | string;
+  value: Result;
 };
 
 export type Result = {
   raw: number | string;
-  formatted: string;
+  formatType: FormatType;
+  unit?: string;
 };
 
-export type FormatType = 'regular-number' | 'currency' | 'comment';
+export type FormatType = 'number' | 'currency' | 'measurement' | 'none';
 
 export type ExchangeRate = {
   [currency: string]: number;

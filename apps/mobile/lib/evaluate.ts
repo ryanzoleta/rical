@@ -9,12 +9,7 @@ export const RE_COMMENT = /^#(.*)$/m;
 const locales = getLocales();
 const locale = locales.slice(-1)[0].regionCode ?? 'US';
 
-export function evaluate(
-  input: string,
-  variables: Variable[],
-  rates: ExchangeRate,
-  precision: number,
-) {
+export function evaluate(input: string, variables: Variable[], rates: ExchangeRate) {
   if (isConversion(input)) {
     RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
@@ -23,11 +18,12 @@ export function evaluate(
       const result = evalConversion(tokens, rates);
       return {
         raw: result[0],
-        formatted: formatNumber(result[0] as number, precision) + ' ' + result[1],
+        unit: tokens?.dest,
+        formatType: isCurrency(tokens?.dest) ? 'currency' : 'measurement',
       } as Result;
     }
 
-    return { raw: 0, formatted: '0' } as Result;
+    return { raw: 0, formatType: 'number' } as Result;
   }
 
   const tokens = tokenizeArithmetic(input, variables);
@@ -44,11 +40,12 @@ export function evaluate(
   if (lastToken && isCurrency(lastToken.toString())) {
     return {
       raw: result,
-      formatted: formatNumber(result, precision) + ' ' + lastToken,
+      unit: lastToken.toString(),
+      formatType: 'measurement',
     } as Result;
   }
 
-  return { raw: result, formatted: formatNumber(result, precision) } as Result;
+  return { raw: result, formatType: 'number' } as Result;
 }
 
 export function isAssignment(input: string) {
@@ -64,6 +61,26 @@ export function isConversion(input: string) {
   return RE_CONVERSION.test(input);
 }
 
-function formatNumber(value: number, precision: number) {
-  return Intl.NumberFormat(locale, { maximumFractionDigits: precision }).format(value);
+export function format(result: Result, precision: number) {
+  if (result.formatType === 'number') {
+    return Intl.NumberFormat(locale, { maximumFractionDigits: precision }).format(
+      result.raw as number,
+    );
+  } else if (result.formatType === 'currency') {
+    return (
+      Intl.NumberFormat(locale, {
+        maximumFractionDigits: precision,
+      }).format(result.raw as number) +
+      ' ' +
+      result.unit
+    );
+  } else if (result.formatType === 'measurement') {
+    return (
+      Intl.NumberFormat(locale, {
+        maximumFractionDigits: precision,
+      }).format(result.raw as number) +
+      ' ' +
+      result.unit
+    );
+  }
 }

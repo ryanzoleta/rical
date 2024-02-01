@@ -20,7 +20,7 @@ export function tokenizeArithmetic(input: string, variables: Variable[]) {
       if (isCurrency(token)) {
         matches.push(token.toUpperCase());
       } else {
-        matches.push(variables.find((v) => v.name === token)?.value as number);
+        matches.push(variables.find((v) => v.name === token)?.value.raw as number);
       }
     }
   }

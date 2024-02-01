@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
 import { router, useNavigation } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { evaluate, isAssignment, isComment } from '../lib/evaluate';
+import { evaluate, format, isAssignment, isComment } from '../lib/evaluate';
 import { Variable, Result, ExchangeRate, StoredRates } from '../lib/types';
 import { Calculator, Cog, Keyboard } from 'lucide-react-native';
 import colors from 'tailwindcss/colors';
@@ -99,17 +99,17 @@ export default function HomeScreen() {
       let result;
 
       if (input === '') {
-        result = { raw: ' ', formatted: ' ' } as Result;
+        result = { raw: ' ', formatType: 'none' } as Result;
       } else if (isAssignment(input)) {
-        result = evaluate(input.split('=')[1].trim(), variables, rates, precision);
+        result = evaluate(input.split('=')[1].trim(), variables, rates);
         variables.push({
           name: input.split('=')[0].trim(),
-          value: result.raw,
+          value: result,
         });
       } else if (isComment(input)) {
-        result = { raw: ' ', formatted: ' ' } as Result;
+        result = { raw: ' ', formatType: 'none' } as Result;
       } else {
-        result = evaluate(input.trim(), variables, rates, precision);
+        result = evaluate(input.trim(), variables, rates);
       }
 
       perLineOutput.push(result);
@@ -201,7 +201,7 @@ export default function HomeScreen() {
                 className="font-jetBrainsMono px-3 text-right text-lg text-lime-500"
                 key={index}
               >
-                {output.formatted}
+                {format(output, precision)}
               </Text>
             ))}
           </View>
