@@ -1,6 +1,13 @@
 import { getLocales } from 'expo-localization';
 import { tokenizeArithmetic, shuntingYard, evaluateRpn } from './arithmetic';
-import { RE_CONVERSION, evalConversion, isCurrency, tokenizeConversion } from './conversions';
+import {
+  RE_CONVERSION,
+  areCurrencies,
+  evalConversion,
+  evalCurrencyConcersion,
+  isCurrency,
+  tokenizeConversion,
+} from './conversions';
 import { ExchangeRate, Result, Variable } from './types';
 
 export const RE_ASSIGN = /^([A-Za-z0-9]+)( *)=(.*)$/m;
@@ -14,12 +21,21 @@ export function evaluate(input: string, variables: Variable[], rates: ExchangeRa
     RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
     console.log('conversion tokens', tokens);
+
     if (tokens) {
-      const result = evalConversion(tokens, rates);
+      if (areCurrencies(tokens.src, tokens.dest)) {
+        const result = evalCurrencyConcersion(tokens, rates);
+        return {
+          raw: result[0],
+          unit: tokens?.dest,
+          formatType: 'currency',
+        } as Result;
+      }
+      const result = evalConversion(tokens);
       return {
         raw: result[0],
         unit: tokens?.dest,
-        formatType: isCurrency(tokens?.dest) ? 'currency' : 'measurement',
+        formatType: 'measurement',
       } as Result;
     }
 
@@ -72,7 +88,7 @@ export function format(result: Result, precision: number) {
         maximumFractionDigits: precision,
       }).format(result.raw as number) +
       ' ' +
-      result.unit
+      result.unit?.toUpperCase()
     );
   } else if (result.formatType === 'measurement') {
     return (
@@ -82,5 +98,7 @@ export function format(result: Result, precision: number) {
       ' ' +
       result.unit
     );
+  } else if (result.formatType === 'none') {
+    return ' ';
   }
 }

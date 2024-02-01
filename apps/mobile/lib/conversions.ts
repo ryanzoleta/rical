@@ -22,23 +22,8 @@ export function tokenizeConversion(input: string, variables: Variable[]) {
   return struct as ConversionTokens;
 }
 
-export function evalConversion(tokens: ConversionTokens, rates: ExchangeRate) {
+export function evalConversion(tokens: ConversionTokens) {
   const { num, src, dest } = tokens;
-
-  if (areCurrencies(src, dest)) {
-    const currencyPair = `${src.toUpperCase()}${dest.toUpperCase()}`;
-    const reverseCurrencyPair = `${dest.toUpperCase()}${src.toUpperCase()}`;
-    let result = 0;
-    if (rates[currencyPair]) {
-      result = rates[currencyPair] * num;
-    } else if (rates[reverseCurrencyPair]) {
-      result = num / rates[reverseCurrencyPair];
-    } else {
-      return [num, src.toUpperCase()];
-    }
-
-    return [result, dest.toUpperCase()];
-  }
 
   const sourceUnit = determineUnit(src);
   const destinationUnit = determineUnit(dest);
@@ -56,6 +41,23 @@ export function evalConversion(tokens: ConversionTokens, rates: ExchangeRate) {
   } else {
     return [0, ''];
   }
+}
+
+export function evalCurrencyConcersion(tokens: ConversionTokens, rates: ExchangeRate) {
+  const { num, src, dest } = tokens;
+
+  const currencyPair = `${src.toUpperCase()}${dest.toUpperCase()}`;
+  const reverseCurrencyPair = `${dest.toUpperCase()}${src.toUpperCase()}`;
+  let result = 0;
+  if (rates[currencyPair]) {
+    result = rates[currencyPair] * num;
+  } else if (rates[reverseCurrencyPair]) {
+    result = num / rates[reverseCurrencyPair];
+  } else {
+    return [num, src.toUpperCase()];
+  }
+
+  return [result, dest.toUpperCase()];
 }
 
 function determineUnitType(input: string): keyof typeof conversionFactors | undefined {
@@ -81,7 +83,7 @@ export function isCurrency(str: string) {
   );
 }
 
-function areCurrencies(str1: string, str2: string) {
+export function areCurrencies(str1: string, str2: string) {
   return (
     (ALL_CURRENCIES.map((c) => c.code).includes(str1.toUpperCase()) ||
       ALL_CURRENCIES.map((c) => c.symbol).includes(str1.toUpperCase())) &&
