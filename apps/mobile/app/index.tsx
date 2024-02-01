@@ -7,7 +7,6 @@ import { Variable, Result, ExchangeRate, StoredRates } from '../lib/types';
 import { Calculator, Cog, Keyboard } from 'lucide-react-native';
 import colors from 'tailwindcss/colors';
 import axios from 'axios';
-import moment from 'moment';
 
 function formatInput(text: string) {
   const texts = [];
@@ -40,39 +39,22 @@ export default function HomeScreen() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    Promise.all([
-      AsyncStorage.getItem('inputs'),
-      AsyncStorage.getItem('precision'),
-      AsyncStorage.getItem('rates'),
-    ]).then(([inputsValue, precisionValue, ratesValue]) => {
-      const list = JSON.parse(inputsValue ?? '[""]') as typeof inputs;
-      setInputs(list);
-      setFormattedInputs(list.map(formatInput));
+    Promise.all([AsyncStorage.getItem('inputs'), AsyncStorage.getItem('precision')]).then(
+      ([inputsValue, precisionValue]) => {
+        const list = JSON.parse(inputsValue ?? '[""]') as typeof inputs;
+        setInputs(list);
+        setFormattedInputs(list.map(formatInput));
 
-      setPrecision(parseInt(precisionValue ?? '2'));
+        setPrecision(parseInt(precisionValue ?? '2'));
 
-      if (ratesValue) {
-        const storedRates = JSON.parse(ratesValue) as StoredRates;
-        if (moment(storedRates.updatedAt).diff(moment(), 'days') > 1) {
-          console.log('Setting rates after it was found it was stale...');
-          axios.get('http://localhost:5173/api/rates').then((response) => {
-            const ratesToStore = { rates: response.data, updatedAt: new Date() } as StoredRates;
-            AsyncStorage.setItem('rates', JSON.stringify(ratesToStore));
-            setRates(response.data);
-          });
-        } else {
-          console.log('Setting rates from local storage...');
-          setRates(storedRates.rates);
-        }
-      } else {
-        console.log('Setting rates because it was not found in local storage...');
+        console.log('Setting rates from the server...');
         axios.get('http://localhost:5173/api/rates').then((response) => {
           const ratesToStore = { rates: response.data, updatedAt: new Date() } as StoredRates;
           AsyncStorage.setItem('rates', JSON.stringify(ratesToStore));
           setRates(response.data);
         });
-      }
-    });
+      },
+    );
 
     navigation.addListener('focus', () => {
       AsyncStorage.getItem('precision').then((value) => {

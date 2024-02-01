@@ -15,13 +15,13 @@ export function tokenizeConversion(input: string, variables: Variable[]) {
 
   if ((variable = variables.find((v) => v.name === groups?.src))) {
     struct.num = variable.value.raw as number;
-    struct.src = variable.value.unit as string;
+    struct.src = variable.value.unit?.toUpperCase() as string;
   } else {
-    struct.src = groups.src;
     struct.num = typeof groups.num === 'string' ? parseFloat(groups.num.replace(',', '')) : 0;
+    struct.src = groups.src.toUpperCase();
   }
 
-  struct.dest = groups.dest;
+  struct.dest = groups.dest.toUpperCase();
 
   return struct as ConversionTokens;
 }
@@ -50,18 +50,18 @@ export function evalConversion(tokens: ConversionTokens) {
 export function evalCurrencyConcersion(tokens: ConversionTokens, rates: ExchangeRate) {
   const { num, src, dest } = tokens;
 
-  const currencyPair = `${src.toUpperCase()}${dest.toUpperCase()}`;
-  const reverseCurrencyPair = `${dest.toUpperCase()}${src.toUpperCase()}`;
-  let result = 0;
-  if (rates[currencyPair]) {
-    result = rates[currencyPair] * num;
-  } else if (rates[reverseCurrencyPair]) {
-    result = num / rates[reverseCurrencyPair];
-  } else {
-    return [num, src.toUpperCase()];
+  if (src === 'USD') {
+    const result = rates[dest.toUpperCase()] * num;
+    return [result, dest.toUpperCase()];
+  } else if (dest === 'USD') {
+    const result = num / rates[src.toUpperCase()];
+    return [result, dest.toUpperCase()];
   }
 
-  return [result, dest.toUpperCase()];
+  const usdAmount = num / rates[src.toUpperCase()];
+  const targetAmount = usdAmount * rates[dest.toUpperCase()];
+
+  return [targetAmount, dest.toUpperCase()];
 }
 
 function determineUnitType(input: string): keyof typeof conversionFactors | undefined {
