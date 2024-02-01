@@ -6,9 +6,14 @@ const RE_ARITHMETIC =
   /(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/)|(?<paren>\(|\))|(?<var>[A-Za-z0-9]+)/gm;
 type Operator = '+' | '-' | '*' | '/';
 
-export function tokenizeArithmetic(input: string, variables: Variable[]) {
+export function tokenizeArithmetic(
+  input: string,
+  variables: Variable[],
+): [(string | number)[], Variable[]] {
   const matches = [];
+  const variablesFound = [];
   let match;
+  let variable;
 
   while ((match = RE_ARITHMETIC.exec(input)) !== null) {
     if (match?.groups && match.groups['num']) {
@@ -20,12 +25,14 @@ export function tokenizeArithmetic(input: string, variables: Variable[]) {
       if (isCurrency(token)) {
         matches.push(token.toUpperCase());
       } else {
-        matches.push(variables.find((v) => v.name === token)?.value.raw as number);
+        variable = variables.find((v) => v.name === token);
+        matches.push(variable?.value.raw as number);
+        variablesFound.push({ ...variable } as Variable);
       }
     }
   }
 
-  return matches;
+  return [matches, variablesFound];
 }
 
 /**
