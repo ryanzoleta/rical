@@ -11,13 +11,17 @@ export function tokenizeConversion(input: string, variables: Variable[]) {
 
   if (!groups) return null;
 
-  if (variables.find((v) => v.name === groups?.src)) {
-    struct.num = variables.find((v) => v.name === groups?.src)?.value.raw as number;
+  let variable;
+
+  if ((variable = variables.find((v) => v.name === groups?.src))) {
+    struct.num = variable.value.raw as number;
+    struct.src = variable.value.unit as string;
+  } else {
+    struct.src = groups.src;
+    struct.num = typeof groups.num === 'string' ? parseFloat(groups.num.replace(',', '')) : 0;
   }
 
   struct.dest = groups.dest;
-  struct.src = groups.src;
-  struct.num = typeof groups.num === 'string' ? parseFloat(groups.num.replace(',', '')) : 0;
 
   return struct as ConversionTokens;
 }
