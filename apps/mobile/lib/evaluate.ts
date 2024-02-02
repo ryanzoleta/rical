@@ -13,9 +13,17 @@ export const RE_ASSIGN = /^([A-Za-z0-9_]+)( *)=(.*)$/m;
 export const RE_COMMENT = /^#(.*)$/m;
 export const RE_MEASUREMENT =
   /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)(?<unit>[a-zA-Z0-9_]+) *$/m;
+export const RE_JUST_PERCENTAGE = /^(?<per>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)%) *$/m;
 
 export function evaluate(input: string, variables: Variable[], rates: ExchangeRate) {
-  if (isMeasurement(input)) {
+  if (isPercentage(input)) {
+    const groups = RE_JUST_PERCENTAGE.exec(input)?.groups;
+    const num =
+      typeof groups?.per === 'string'
+        ? parseFloat(groups.per.replace(',', '').replace('%', ''))
+        : 0;
+    return { raw: num / 100, formatType: 'percentage' } as Result;
+  } else if (isMeasurement(input)) {
     const groups = RE_MEASUREMENT.exec(input)?.groups;
     const num = typeof groups?.num === 'string' ? parseFloat(groups.num.replace(',', '')) : 0;
     const unit = groups?.unit.toLowerCase();
@@ -94,6 +102,10 @@ export function isConversion(input: string) {
 
 export function isMeasurement(input: string) {
   return RE_MEASUREMENT.test(input);
+}
+
+export function isPercentage(input: string) {
+  return RE_JUST_PERCENTAGE.test(input);
 }
 
 export function format(result: Result, precision: number, locale: string) {

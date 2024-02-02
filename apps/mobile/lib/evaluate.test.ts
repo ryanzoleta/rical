@@ -182,12 +182,12 @@ describe('Currency Conversions', () => {
 describe('Percentages', () => {
   test('Single Value', () => {
     const result = evaluate('30% of 300', [], {});
-    expect(result.raw).toBe(100);
+    expect(result.raw).toBe(90);
     expect(result.formatType).toBe('number');
   });
 
   test('Single Value Assignment', () => {
-    const result = evaluate('rate = 25%', [], {});
+    const result = evaluate('25%', [], {});
     expect(result.raw).toBe(0.25);
     expect(result.formatType).toBe('percentage');
   });

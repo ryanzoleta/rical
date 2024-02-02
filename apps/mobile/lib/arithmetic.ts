@@ -3,7 +3,7 @@ import { Variable } from './types';
 
 const RE_OPERATORS = /(?<operator>\+|-|\*|\/|\^)/m;
 const RE_ARITHMETIC =
-  /(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/|\^)|(?<paren>\(|\))|(?<var>[A-Za-z0-9_]+)/gm;
+  /(?<per>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)%)|(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/|\^)|(?<paren>\(|\))|(?<of>of)|(?<var>[A-Za-z0-9_]+)/gm;
 type Operator = '+' | '-' | '*' | '/' | '^';
 
 export function tokenizeArithmetic(
@@ -29,6 +29,10 @@ export function tokenizeArithmetic(
         matches.push(variable?.value.raw as number);
         variablesFound.push({ ...variable } as Variable);
       }
+    } else if (match?.groups && match.groups['per']) {
+      matches.push(parseFloat(match[0].replace(',', '').replace('%', '')) / 100);
+    } else if (match?.groups && match.groups['of']) {
+      matches.push('*');
     }
   }
 
