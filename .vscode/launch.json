@@ -8,7 +8,7 @@
       "cwd": "${workspaceRoot}/apps/mobile",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "test"],
-      "console": "externalTerminal"
+      "console": "integratedTerminal"
     }
   ]
 }
