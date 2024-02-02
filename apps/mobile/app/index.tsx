@@ -7,6 +7,7 @@ import { Variable, Result, ExchangeRate, StoredRates } from '../lib/types';
 import { Calculator, Cog, Keyboard } from 'lucide-react-native';
 import colors from 'tailwindcss/colors';
 import axios from 'axios';
+import { getLocales } from 'expo-localization';
 
 function formatInput(text: string) {
   const texts = [];
@@ -37,6 +38,9 @@ export default function HomeScreen() {
   const focusedTextInput = useRef<TextInput | null>(null);
 
   const navigation = useNavigation();
+
+  const locales = getLocales();
+  const locale = locales.slice(-1)[0].regionCode ?? 'US';
 
   useEffect(() => {
     Promise.all([AsyncStorage.getItem('inputs'), AsyncStorage.getItem('precision')]).then(
@@ -183,7 +187,7 @@ export default function HomeScreen() {
                 className="font-jetBrainsMono px-3 text-right text-lg text-lime-500"
                 key={index}
               >
-                {format(output, precision)}
+                {format(output, precision, locale)}
               </Text>
             ))}
           </View>

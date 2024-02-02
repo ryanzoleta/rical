@@ -9,7 +9,7 @@ export type Result = {
   unit?: string;
 };
 
-export type FormatType = 'number' | 'currency' | 'measurement' | 'none';
+export type FormatType = 'number' | 'currency' | 'measurement' | 'none' | 'percentage';
 
 export type ExchangeRate = {
   [currency: string]: number;

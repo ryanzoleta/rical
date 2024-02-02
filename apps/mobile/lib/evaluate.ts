@@ -1,4 +1,3 @@
-import { getLocales } from 'expo-localization';
 import { tokenizeArithmetic, shuntingYard, evaluateRpn } from './arithmetic';
 import {
   RE_CONVERSION,
@@ -12,9 +11,6 @@ import { ExchangeRate, Result, Variable } from './types';
 
 export const RE_ASSIGN = /^([A-Za-z0-9_]+)( *)=(.*)$/m;
 export const RE_COMMENT = /^#(.*)$/m;
-
-const locales = getLocales();
-const locale = locales.slice(-1)[0].regionCode ?? 'US';
 
 export function evaluate(input: string, variables: Variable[], rates: ExchangeRate) {
   if (isConversion(input)) {
@@ -89,7 +85,7 @@ export function isConversion(input: string) {
   return RE_CONVERSION.test(input);
 }
 
-export function format(result: Result, precision: number) {
+export function format(result: Result, precision: number, locale: string) {
   if (result.formatType === 'number') {
     return Intl.NumberFormat(locale, { maximumFractionDigits: precision }).format(
       result.raw as number,
