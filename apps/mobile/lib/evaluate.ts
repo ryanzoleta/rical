@@ -54,7 +54,7 @@ export function evaluate(input: string, variables: Variable[], rates: ExchangeRa
     return {
       raw: result,
       unit: lastToken.toString(),
-      formatType: 'measurement',
+      formatType: 'currency',
     } as Result;
   } else if (
     lastVariableFound &&
