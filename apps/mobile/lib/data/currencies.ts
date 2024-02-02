@@ -315,7 +315,7 @@ export const ALL_CURRENCIES = [
     countries: ['CD'],
   },
   {
-    symbol: 'CHF',
+    symbol: '₣',
     name: 'Swiss Franc',
     symbol_native: 'CHF',
     decimal_digits: 2,
@@ -772,7 +772,7 @@ export const ALL_CURRENCIES = [
     countries: [],
   },
   {
-    symbol: 'Rs',
+    symbol: '₹',
     name: 'Indian Rupee',
     symbol_native: 'টকা',
     decimal_digits: 2,
