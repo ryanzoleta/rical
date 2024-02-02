@@ -87,8 +87,6 @@ export function shuntingYard(tokens: (string | number)[]) {
  * @returns
  */
 export function evaluateRpn(tokens: (string | number)[]) {
-  console.log('evaluateRpn START, tokens =', tokens);
-
   const stack: number[] = [];
 
   for (const token of tokens) {
@@ -105,7 +103,6 @@ export function evaluateRpn(tokens: (string | number)[]) {
       stack.push(evalArithmetic(op1, op2, token as Operator));
     }
   }
-  +console.log('evaluateRpn START, stack =', stack);
   return stack[0];
 }
 

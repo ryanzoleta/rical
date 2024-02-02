@@ -31,7 +31,6 @@ export function evaluate(input: string, variables: Variable[], rates: ExchangeRa
   } else if (isConversion(input)) {
     RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
-    console.log('conversion tokens', tokens);
 
     if (tokens) {
       if (areCurrencies(tokens.src, tokens.dest)) {

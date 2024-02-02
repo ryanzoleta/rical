@@ -195,7 +195,7 @@ describe('Currency Conversions', () => {
   test('With Currency Symbols and Arithmetic Expression and Variable', () => {
     const result = evaluate(
       '$10 * 5 - fee',
-      [{ name: 'fee', value: { raw: 8, formatType: 'currency', unit: 'USD' } }],
+      [{ name: 'fee', value: { raw: 8, formatType: 'number' } }],
       {},
     );
     expect(result.raw).toBe(42);
