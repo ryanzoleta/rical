@@ -1,6 +1,7 @@
+export const RE_NUMBER = /^(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))$/m;
 export const RE_OPERATORS = /(?<operator>\+|-|\*|\/|\^)/m;
 export const RE_ARITHMETIC =
-  /(?<per> *(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)%)|(?<num>(([a-zA-Z]*\$)|(CN¥)|(¥)|₩|€|£|₱|₹)? *(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/|\^)|(?<paren>\(|\))|(?<of>of)|(?<var>[A-Za-z0-9_]+)/gm;
+  /(?<per> *(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)%)|(?<num>(([a-zA-Z]*\$)|(CN¥)|(¥)|₩|€|£|₱|₹)? *(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?) *[a-zA-Z]*)|(?<op>\+|-|\*|\/|\^)|(?<paren>\(|\))|(?<of>of)|(?<var>[A-Za-z0-9_]+)/gm;
 
 export const RE_CURRENCY_SYMBOLS = /(([a-zA-Z]*\$)|(CN¥)|(¥)|₩|€|£|₱|₹)/m;
 

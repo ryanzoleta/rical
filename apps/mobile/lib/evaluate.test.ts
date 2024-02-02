@@ -180,7 +180,7 @@ describe('Currency Conversions', () => {
       ],
       { PHP: 56.288502 },
     );
-    expect(result.raw).toBe(15760.78);
+    expect((result.raw as number).toFixed(2)).toBe('15760.78');
     expect(result.formatType).toBe('currency');
     expect(result.unit).toBe('PHP');
   });

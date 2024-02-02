@@ -26,6 +26,11 @@ export function tokenizeArithmetic(
             else unitsFound.push(currency.code);
           }
         }
+      } else if (/[a-zA-Z]+/.test(match[0])) {
+        const currency = /[a-zA-Z]+/.exec(match[0]);
+        if (currency && isCurrency(currency[0].trim().toUpperCase())) {
+          unitsFound.push(currency[0].trim().toUpperCase());
+        }
       }
       matches.push(parseFloat(match[0].replace(',', '').replace(RE_CURRENCY_SYMBOLS, '')));
     } else if (match?.groups && (match.groups['op'] || match.groups['paren'])) {
