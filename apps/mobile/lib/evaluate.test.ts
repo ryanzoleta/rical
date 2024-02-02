@@ -207,6 +207,7 @@ describe('Percentages', () => {
     expect(result.raw).toBe(50);
     expect(result.formatType).toBe('number');
   });
+  
 
   test('With Arithmetic Expression', () => {
     const result = evaluate('100 * 2 * 25%', [], {});

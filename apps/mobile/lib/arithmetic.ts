@@ -1,10 +1,10 @@
 import { isCurrency } from './conversions';
 import { Variable } from './types';
 
-const RE_OPERATORS = /(?<operator>\+|-|\*|\/)/m;
+const RE_OPERATORS = /(?<operator>\+|-|\*|\/|\^)/m;
 const RE_ARITHMETIC =
-  /(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/)|(?<paren>\(|\))|(?<var>[A-Za-z0-9_]+)/gm;
-type Operator = '+' | '-' | '*' | '/';
+  /(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/|\^)|(?<paren>\(|\))|(?<var>[A-Za-z0-9_]+)/gm;
+type Operator = '+' | '-' | '*' | '/' | '^';
 
 export function tokenizeArithmetic(
   input: string,
@@ -112,10 +112,12 @@ export function evaluateRpn(tokens: (string | number)[]) {
  * @returns
  */
 function precedence(A: string, B: string): boolean {
+  const higherPrecedence = ['^'];
   const highPrecedence = ['*', '/'];
   const lowPrecedence = ['+', '-'];
 
   return (
+    (higherPrecedence.includes(A) && !higherPrecedence.includes(B)) ||
     (highPrecedence.includes(A) && lowPrecedence.includes(B)) ||
     highPrecedence.includes(A) === highPrecedence.includes(B)
   );
@@ -131,6 +133,8 @@ function evalArithmetic(op1: number, op2: number, operator: Operator) {
       return op1 * op2;
     case '/':
       return op1 / op2;
+    case '^':
+      return op1 ** op2;
     default:
       throw new Error(`unsupported operator ${operator}`);
   }
