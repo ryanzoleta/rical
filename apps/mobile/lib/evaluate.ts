@@ -11,9 +11,16 @@ import { ExchangeRate, Result, Variable } from './types';
 
 export const RE_ASSIGN = /^([A-Za-z0-9_]+)( *)=(.*)$/m;
 export const RE_COMMENT = /^#(.*)$/m;
+export const RE_MEASUREMENT =
+  /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)(?<unit>[a-zA-Z0-9_]+) *$/m;
 
 export function evaluate(input: string, variables: Variable[], rates: ExchangeRate) {
-  if (isConversion(input)) {
+  if (isMeasurement(input)) {
+    const groups = RE_MEASUREMENT.exec(input)?.groups;
+    const num = typeof groups?.num === 'string' ? parseFloat(groups.num.replace(',', '')) : 0;
+    const unit = groups?.unit.toLowerCase();
+    return { raw: num, unit, formatType: 'measurement' } as Result;
+  } else if (isConversion(input)) {
     RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
     console.log('conversion tokens', tokens);
@@ -83,6 +90,10 @@ export function isComment(input: string) {
 export function isConversion(input: string) {
   RE_CONVERSION.lastIndex = 0;
   return RE_CONVERSION.test(input);
+}
+
+export function isMeasurement(input: string) {
+  return RE_MEASUREMENT.test(input);
 }
 
 export function format(result: Result, precision: number, locale: string) {
