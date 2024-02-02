@@ -69,13 +69,14 @@ describe('Conversions', () => {
   test('Single Value With Unit', () => {
     const result = evaluate('5 m', [], {});
     expect(result.raw).toBe(5);
-    expect(result.formatType).toBe('measurement');
     expect(result.unit).toBe('m');
   });
 
   test('Measurement', () => {
     const result = evaluate('5 m to cm', [], {});
     expect(result.raw).toBe(500);
+    expect(result.unit).toBe('cm');
+    expect(result.formatType).toBe('measurement');
   });
 
   test('Temperature C to F', () => {

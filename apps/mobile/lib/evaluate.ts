@@ -30,7 +30,7 @@ export function evaluate(input: string, variables: Variable[], rates: ExchangeRa
       const result = evalConversion(tokens);
       return {
         raw: result[0],
-        unit: tokens?.dest,
+        unit: tokens?.dest.toLowerCase(),
         formatType: 'measurement',
       } as Result;
     }

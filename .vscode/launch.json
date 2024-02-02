@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Test",
+      "cwd": "${workspaceRoot}/apps/mobile",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "test"],
+      "console": "externalTerminal"
+    }
+  ]
+}

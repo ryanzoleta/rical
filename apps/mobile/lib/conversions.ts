@@ -29,8 +29,8 @@ export function tokenizeConversion(input: string, variables: Variable[]) {
 export function evalConversion(tokens: ConversionTokens) {
   const { num, src, dest } = tokens;
 
-  const sourceUnit = determineUnit(src);
-  const destinationUnit = determineUnit(dest);
+  const sourceUnit = determineUnit(src.toLowerCase());
+  const destinationUnit = determineUnit(dest.toLowerCase());
   const sourceUnitType = determineUnitType(sourceUnit as string);
   const destinationUnitType = determineUnitType(destinationUnit as string);
   if (sourceUnit && destinationUnit && sourceUnitType && sourceUnitType === destinationUnitType) {
