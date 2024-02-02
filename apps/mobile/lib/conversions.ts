@@ -34,6 +34,19 @@ export function evalConversion(tokens: ConversionTokens) {
   const sourceUnitType = determineUnitType(sourceUnit as string);
   const destinationUnitType = determineUnitType(destinationUnit as string);
   if (sourceUnit && destinationUnit && sourceUnitType && sourceUnitType === destinationUnitType) {
+    if (sourceUnitType === 'temperature') {
+      if (sourceUnit === 'celsius' && destinationUnit === 'fahrenheit')
+        return [num * 1.8 + 32, 'F'];
+      if (sourceUnit === 'celsius' && destinationUnit === 'kelvin') return [num + 273.15, 'K'];
+      if (sourceUnit === 'fahrenheit' && destinationUnit === 'celsius')
+        return [(num - 32) / 1.8, 'C'];
+      if (sourceUnit === 'fahrenheit' && destinationUnit === 'kelvin')
+        return [(num + 459.67) * (5 / 9), 'K'];
+      if (sourceUnit === 'kelvin' && destinationUnit === 'celsius') return [num - 273.15, 'C'];
+      if (sourceUnit === 'kelvin' && destinationUnit === 'fahrenheit')
+        return [num * (9 / 5) - 459.67, 'F'];
+    }
+
     const factor =
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore

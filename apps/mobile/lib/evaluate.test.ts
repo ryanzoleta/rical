@@ -101,7 +101,7 @@ describe('Conversions', () => {
 
   test('Temperature F to K', () => {
     const result = evaluate('5 F to K', [], {});
-    expect(result.raw).toBe(258.15);
+    expect((result.raw as number).toFixed(2)).toBe('258.15');
   });
 
   test('Temperature K to F', () => {
