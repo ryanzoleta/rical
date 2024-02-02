@@ -181,24 +181,24 @@ describe('Currency Conversions', () => {
 
 describe('Percentages', () => {
   test('Single Value', () => {
-    const result = evaluate('25% of 100', [], {});
-    expect(result.raw).toBe(25);
+    const result = evaluate('30% of 300', [], {});
+    expect(result.raw).toBe(100);
     expect(result.formatType).toBe('number');
   });
 
   test('Single Value Assignment', () => {
     const result = evaluate('rate = 25%', [], {});
-    expect(result.raw).toBe(25);
+    expect(result.raw).toBe(0.25);
     expect(result.formatType).toBe('percentage');
   });
 
   test('With Variable', () => {
     const result = evaluate(
-      '25% of x',
-      [{ name: 'x', value: { raw: 100, formatType: 'number' } }],
+      '35% of x',
+      [{ name: 'x', value: { raw: 500, formatType: 'number' } }],
       {},
     );
-    expect(result.raw).toBe(25);
+    expect(result.raw).toBe(175);
     expect(result.formatType).toBe('number');
   });
 
@@ -211,7 +211,7 @@ describe('Percentages', () => {
   test('With Arithmetic Expression', () => {
     const result = evaluate('100 * 2 * 25%', [], {});
     expect(result.raw).toBe(50);
-    expect(result.formatType).toBe('percentage');
+    expect(result.formatType).toBe('number');
   });
 
   test('With Variable and Arithmetic Expression', () => {
@@ -227,7 +227,7 @@ describe('Percentages', () => {
   test('Variable as Percentage', () => {
     const result = evaluate(
       'rate of 100',
-      [{ name: 'rate', value: { raw: 20, formatType: 'percentage' } }],
+      [{ name: 'rate', value: { raw: 0.2, formatType: 'percentage' } }],
       {},
     );
     expect(result.raw).toBe(20);
@@ -237,7 +237,7 @@ describe('Percentages', () => {
   test('Variable as Percentage in Arithmetic Expression', () => {
     const result = evaluate(
       'rate of 100 * 2',
-      [{ name: 'rate', value: { raw: 20, formatType: 'percentage' } }],
+      [{ name: 'rate', value: { raw: 0.2, formatType: 'percentage' } }],
       {},
     );
     expect(result.raw).toBe(40);
