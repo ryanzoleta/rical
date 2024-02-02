@@ -14,8 +14,9 @@ import {
   RE_COMMENT,
   RE_CONVERSION,
   RE_CONVERSION_SHORT,
+  RE_CONVERSION_EXPRESSION,
 } from './regexes';
-import { ExchangeRate, Result, Variable } from './types';
+import { ConversionTokens, ExchangeRate, Result, Variable } from './types';
 
 export function evaluate(input: string, variables: Variable[], rates: ExchangeRate) {
   if (isPercentage(input)) {
@@ -65,6 +66,54 @@ export function evaluate(input: string, variables: Variable[], rates: ExchangeRa
           formatType: 'currency',
         } as Result;
       }
+    }
+  } else if (isConversionExpression(input)) {
+    const [expressionString, destinationUnit] = input.split(/to|in/);
+
+    if (isCurrency(destinationUnit.trim().toUpperCase())) {
+      const [expressionTokens, variablesFound, unitsFound] = tokenizeArithmetic(
+        expressionString.trim(),
+        variables,
+      );
+
+      const rpn = shuntingYard(expressionTokens);
+      let result = 0;
+
+      try {
+        result = evaluateRpn(rpn);
+      } catch (e) {
+        console.log('error', e);
+      }
+
+      let sourceUnit = destinationUnit.trim().toUpperCase();
+      const lastUnit = unitsFound?.slice(-1)[0];
+      const lastVariableFound = variablesFound.slice(-1)[0];
+      if (lastUnit && isCurrency(lastUnit.toString())) {
+        sourceUnit = lastUnit;
+      } else if (
+        lastVariableFound &&
+        lastVariableFound.value &&
+        (lastVariableFound.value.formatType === 'currency' ||
+          lastVariableFound.value.formatType === 'measurement') &&
+        variablesFound.slice(-1)[0].value.unit
+      ) {
+        sourceUnit = variablesFound.slice(-1)[0].value.unit ?? ' ';
+      }
+
+      const conversionResult = evalCurrencyConcersion(
+        {
+          src: sourceUnit.toUpperCase(),
+          dest: destinationUnit.trim().toUpperCase(),
+          num: result,
+        } as ConversionTokens,
+        rates,
+      );
+
+      return {
+        raw: conversionResult[0],
+        formatType: 'currency',
+        unit: destinationUnit.trim().toUpperCase(),
+      } as Result;
     }
   }
 
@@ -118,6 +167,10 @@ export function isConversion(input: string) {
 export function isConversionShort(input: string) {
   RE_CONVERSION_SHORT.lastIndex = 0;
   return RE_CONVERSION_SHORT.test(input);
+}
+
+export function isConversionExpression(input: string) {
+  return RE_CONVERSION_EXPRESSION.test(input);
 }
 
 export function isMeasurement(input: string) {

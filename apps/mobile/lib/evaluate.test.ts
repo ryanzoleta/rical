@@ -162,6 +162,13 @@ describe('Currency Conversions', () => {
     expect(result.unit).toBe('PHP');
   });
 
+  test('Conversion With Arithmetic Expression (Currency Symbol)', () => {
+    const result = evaluate('10 * $5 to php', [], { PHP: 56.288502 });
+    expect((result.raw as number).toFixed(2)).toBe('2814.43');
+    expect(result.formatType).toBe('currency');
+    expect(result.unit).toBe('PHP');
+  });
+
   test('With Arithmetic Expression and Variable', () => {
     const result = evaluate(
       '10 * hourly in php',

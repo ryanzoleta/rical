@@ -15,3 +15,5 @@ export const RE_CONVERSION =
 
 export const RE_CONVERSION_SHORT =
   /^(?<num>(([a-zA-Z]*\$)|(CN¥)|(¥)|₩|€|£|₱|₹)? *(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +(to|in) +(?<dest>[a-zA-Z]+)$/gm;
+
+export const RE_CONVERSION_EXPRESSION = /^.* *(to|in) [a-zA-Z]+$/m;
