@@ -18,10 +18,13 @@ export function tokenizeArithmetic(
   while ((match = RE_ARITHMETIC.exec(input)) !== null) {
     if (match?.groups && match.groups['num']) {
       if (RE_CURRENCY_SYMBOLS.test(match[0])) {
-        const currency = ALL_CURRENCIES.find((c) => match && c.symbol === match[0].charAt(0));
-        if (currency) {
-          if (currency.symbol === '$') unitsFound.push('USD');
-          else unitsFound.push(currency.code);
+        const currencySymbolMatch = RE_CURRENCY_SYMBOLS.exec(match[0]);
+        if (currencySymbolMatch) {
+          const currency = ALL_CURRENCIES.find((c) => match && c.symbol === currencySymbolMatch[0]);
+          if (currency) {
+            if (currency.symbol === '$') unitsFound.push('USD');
+            else unitsFound.push(currency.code);
+          }
         }
       }
       matches.push(parseFloat(match[0].replace(',', '').replace(RE_CURRENCY_SYMBOLS, '')));
