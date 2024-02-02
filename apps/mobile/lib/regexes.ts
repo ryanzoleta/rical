@@ -12,3 +12,6 @@ export const RE_JUST_PERCENTAGE = /^(?<per>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)%) 
 
 export const RE_CONVERSION =
   /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)?(?<src>[a-zA-Z0-9_]+) +(to|in) (?<dest>[a-zA-Z]+)$/gm;
+
+export const RE_CONVERSION_SHORT =
+  /^(?<num>(([a-zA-Z]*\$)|(CN¥)|(¥)|₩|€|£|₱|₹)? *(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +(to|in) +(?<dest>[a-zA-Z]+)$/gm;

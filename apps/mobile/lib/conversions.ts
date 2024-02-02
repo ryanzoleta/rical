@@ -1,7 +1,7 @@
 import { ConversionTokens, ExchangeRate, Variable } from './types';
 import { ALL_CURRENCIES } from './data/currencies';
 import { conversionFactors, units } from './data/measurements';
-import { RE_CONVERSION } from './regexes';
+import { RE_CONVERSION, RE_CONVERSION_SHORT, RE_CURRENCY_SYMBOLS } from './regexes';
 
 export function tokenizeConversion(input: string, variables: Variable[]) {
   const groups = RE_CONVERSION.exec(input)?.groups;
@@ -19,6 +19,29 @@ export function tokenizeConversion(input: string, variables: Variable[]) {
     struct.src = groups.src.toUpperCase();
   }
 
+  struct.dest = groups.dest.toUpperCase();
+
+  return struct as ConversionTokens;
+}
+
+export function tokenizeConversionShort(input: string) {
+  const groups = RE_CONVERSION_SHORT.exec(input)?.groups;
+  const struct: { num: number; src: string; dest: string } = { num: 0, src: '', dest: '' };
+
+  if (!groups) return null;
+
+  const currencySymbol = RE_CURRENCY_SYMBOLS.exec(groups.num)?.[0]?.toUpperCase() as string;
+
+  if (currencySymbol === '$') {
+    struct.src = 'USD';
+  } else if (currencySymbol) {
+    const currency = ALL_CURRENCIES.find((c) => c.symbol === currencySymbol);
+    if (currency) {
+      struct.src = currency.code;
+    }
+  }
+
+  struct.num = parseFloat(groups.num.replace(RE_CURRENCY_SYMBOLS, '').replace(',', ''));
   struct.dest = groups.dest.toUpperCase();
 
   return struct as ConversionTokens;

@@ -5,6 +5,7 @@ import {
   evalCurrencyConcersion,
   isCurrency,
   tokenizeConversion,
+  tokenizeConversionShort,
 } from './conversions';
 import {
   RE_JUST_PERCENTAGE,
@@ -12,6 +13,7 @@ import {
   RE_ASSIGN,
   RE_COMMENT,
   RE_CONVERSION,
+  RE_CONVERSION_SHORT,
 } from './regexes';
 import { ExchangeRate, Result, Variable } from './types';
 
@@ -50,6 +52,20 @@ export function evaluate(input: string, variables: Variable[], rates: ExchangeRa
     }
 
     return { raw: 0, formatType: 'number' } as Result;
+  } else if (isConversionShort(input)) {
+    RE_CONVERSION_SHORT.lastIndex = 0;
+    const tokens = tokenizeConversionShort(input);
+
+    if (tokens) {
+      if (areCurrencies(tokens.src, tokens.dest)) {
+        const result = evalCurrencyConcersion(tokens, rates);
+        return {
+          raw: result[0],
+          unit: tokens?.dest,
+          formatType: 'currency',
+        } as Result;
+      }
+    }
   }
 
   const [tokens, variablesFound, unitsFound] = tokenizeArithmetic(input, variables);
@@ -97,6 +113,11 @@ export function isComment(input: string) {
 export function isConversion(input: string) {
   RE_CONVERSION.lastIndex = 0;
   return RE_CONVERSION.test(input);
+}
+
+export function isConversionShort(input: string) {
+  RE_CONVERSION_SHORT.lastIndex = 0;
+  return RE_CONVERSION_SHORT.test(input);
 }
 
 export function isMeasurement(input: string) {
