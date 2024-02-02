@@ -1,12 +1,9 @@
 import { isCurrency } from './conversions';
 import { ALL_CURRENCIES } from './data/currencies';
+import { RE_ARITHMETIC, RE_CURRENCY_SYMBOLS, RE_OPERATORS } from './regexes';
 import { Variable } from './types';
 
-const RE_OPERATORS = /(?<operator>\+|-|\*|\/|\^)/m;
-const RE_ARITHMETIC =
-  /(?<per>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)%)|(?<num>(([a-zA-Z]*\$)|(CN¥)|(¥)|₩|€|£|₱|₹)? *(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/|\^)|(?<paren>\(|\))|(?<of>of)|(?<var>[A-Za-z0-9_]+)/gm;
 type Operator = '+' | '-' | '*' | '/' | '^';
-const RE_CURRENCY_SYMBOLS = /(([a-zA-Z]*\$)|(CN¥)|(¥)|₩|€|£|₱|₹)/m;
 
 export function tokenizeArithmetic(
   input: string,

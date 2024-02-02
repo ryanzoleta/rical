@@ -1,19 +1,19 @@
 import { tokenizeArithmetic, shuntingYard, evaluateRpn } from './arithmetic';
 import {
-  RE_CONVERSION,
   areCurrencies,
   evalConversion,
   evalCurrencyConcersion,
   isCurrency,
   tokenizeConversion,
 } from './conversions';
+import {
+  RE_JUST_PERCENTAGE,
+  RE_MEASUREMENT,
+  RE_ASSIGN,
+  RE_COMMENT,
+  RE_CONVERSION,
+} from './regexes';
 import { ExchangeRate, Result, Variable } from './types';
-
-export const RE_ASSIGN = /^([A-Za-z0-9_]+)( *)=(.*)$/m;
-export const RE_COMMENT = /^#(.*)$/m;
-export const RE_MEASUREMENT =
-  /^((?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)) +)(?<unit>[a-zA-Z0-9_]+) *$/m;
-export const RE_JUST_PERCENTAGE = /^(?<per>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)%) *$/m;
 
 export function evaluate(input: string, variables: Variable[], rates: ExchangeRate) {
   if (isPercentage(input)) {
