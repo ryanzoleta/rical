@@ -1,23 +1,33 @@
 import { isCurrency } from './conversions';
+import { ALL_CURRENCIES } from './data/currencies';
 import { Variable } from './types';
 
 const RE_OPERATORS = /(?<operator>\+|-|\*|\/|\^)/m;
 const RE_ARITHMETIC =
-  /(?<per>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)%)|(?<num>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/|\^)|(?<paren>\(|\))|(?<of>of)|(?<var>[A-Za-z0-9_]+)/gm;
+  /(?<per>(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?)%)|(?<num>(([a-zA-Z]*\$)|(CN¥)|(¥)|₩|€|£|₱|₹)? *(\d+(,\d{3})*(\.\d+)?|\d+(\.\d+)?))|(?<op>\+|-|\*|\/|\^)|(?<paren>\(|\))|(?<of>of)|(?<var>[A-Za-z0-9_]+)/gm;
 type Operator = '+' | '-' | '*' | '/' | '^';
+const RE_CURRENCY_SYMBOLS = /(([a-zA-Z]*\$)|(CN¥)|(¥)|₩|€|£|₱|₹)/m;
 
 export function tokenizeArithmetic(
   input: string,
   variables: Variable[],
-): [(string | number)[], Variable[]] {
+): [(string | number)[], Variable[], string[]] {
   const matches = [];
   const variablesFound = [];
-  let match;
+  const unitsFound: string[] = [];
+  let match: RegExpExecArray | null;
   let variable;
 
   while ((match = RE_ARITHMETIC.exec(input)) !== null) {
     if (match?.groups && match.groups['num']) {
-      matches.push(parseFloat(match[0].replace(',', '')));
+      if (RE_CURRENCY_SYMBOLS.test(match[0])) {
+        const currency = ALL_CURRENCIES.find((c) => match && c.symbol === match[0].charAt(0));
+        if (currency) {
+          if (currency.symbol === '$') unitsFound.push('USD');
+          else unitsFound.push(currency.code);
+        }
+      }
+      matches.push(parseFloat(match[0].replace(',', '').replace(RE_CURRENCY_SYMBOLS, '')));
     } else if (match?.groups && (match.groups['op'] || match.groups['paren'])) {
       matches.push(match[0]);
     } else if (match?.groups && match.groups['var']) {
@@ -36,7 +46,7 @@ export function tokenizeArithmetic(
     }
   }
 
-  return [matches, variablesFound];
+  return [matches, variablesFound, unitsFound];
 }
 
 /**

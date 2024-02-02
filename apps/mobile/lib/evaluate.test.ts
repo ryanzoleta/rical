@@ -185,6 +185,13 @@ describe('Currency Conversions', () => {
     expect(result.unit).toBe('USD');
   });
 
+  test('With Currency Symbols (₱)', () => {
+    const result = evaluate('₱10 * 4', [], {});
+    expect(result.raw).toBe(40);
+    expect(result.formatType).toBe('currency');
+    expect(result.unit).toBe('PHP');
+  });
+
   test('With Currency Symbols and Arithmetic Expression', () => {
     const result = evaluate('$10 * 5', [], {});
     expect(result.raw).toBe(50);

@@ -52,7 +52,7 @@ export function evaluate(input: string, variables: Variable[], rates: ExchangeRa
     return { raw: 0, formatType: 'number' } as Result;
   }
 
-  const [tokens, variablesFound] = tokenizeArithmetic(input, variables);
+  const [tokens, variablesFound, unitsFound] = tokenizeArithmetic(input, variables);
   const rpn = shuntingYard(tokens);
   let result = 0;
 
@@ -62,12 +62,12 @@ export function evaluate(input: string, variables: Variable[], rates: ExchangeRa
     console.log('error', e);
   }
 
-  const lastToken = tokens.slice(-1)[0];
+  const lastUnit = unitsFound?.slice(-1)[0];
   const lastVariableFound = variablesFound.slice(-1)[0];
-  if (lastToken && isCurrency(lastToken.toString())) {
+  if (lastUnit && isCurrency(lastUnit.toString())) {
     return {
       raw: result,
-      unit: lastToken.toString(),
+      unit: lastUnit.toString(),
       formatType: 'currency',
     } as Result;
   } else if (
