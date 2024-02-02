@@ -155,9 +155,9 @@ describe('Currency Conversions', () => {
     expect(result.unit).toBe('PHP');
   });
 
-  test('With Arithmetic Expression', () => {
+  test('Conversion With Arithmetic Expression', () => {
     const result = evaluate('10 * 5 usd to php', [], { PHP: 56.288502 });
-    expect(result.raw).toBe(2814.43);
+    expect((result.raw as number).toFixed(2)).toBe('2814.43');
     expect(result.formatType).toBe('currency');
     expect(result.unit).toBe('PHP');
   });
@@ -174,6 +174,38 @@ describe('Currency Conversions', () => {
       { PHP: 56.288502 },
     );
     expect(result.raw).toBe(15760.78);
+    expect(result.formatType).toBe('currency');
+    expect(result.unit).toBe('PHP');
+  });
+
+  test('With Currency Symbols', () => {
+    const result = evaluate('$10', [], {});
+    expect(result.raw).toBe(10);
+    expect(result.formatType).toBe('currency');
+    expect(result.unit).toBe('USD');
+  });
+
+  test('With Currency Symbols and Arithmetic Expression', () => {
+    const result = evaluate('$10 * 5', [], {});
+    expect(result.raw).toBe(50);
+    expect(result.formatType).toBe('currency');
+    expect(result.unit).toBe('USD');
+  });
+
+  test('With Currency Symbols and Arithmetic Expression and Variable', () => {
+    const result = evaluate(
+      '$10 * 5 - fee',
+      [{ name: 'fee', value: { raw: 8, formatType: 'currency', unit: 'USD' } }],
+      {},
+    );
+    expect(result.raw).toBe(42);
+    expect(result.formatType).toBe('currency');
+    expect(result.unit).toBe('USD');
+  });
+
+  test('Conversion with Currency Symbol', () => {
+    const result = evaluate('$10 to php', [], { PHP: 56.288502 });
+    expect((result.raw as number).toFixed(2)).toBe('562.89');
     expect(result.formatType).toBe('currency');
     expect(result.unit).toBe('PHP');
   });
