@@ -64,6 +64,12 @@ export default function HomeScreen() {
       AsyncStorage.getItem('precision').then((value) => {
         setPrecision(parseInt(value ?? '2'));
       });
+
+      AsyncStorage.getItem('inputs').then((inputsValue) => {
+        const list = JSON.parse(inputsValue ?? '[""]') as typeof inputs;
+        setInputs(list);
+        setFormattedInputs(list.map(formatInput));
+      });
     });
 
     setLoaded(true);

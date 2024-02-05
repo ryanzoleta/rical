@@ -86,7 +86,7 @@ function SettingsPage() {
                 style: 'destructive',
                 onPress: () => {
                   AsyncStorage.setItem('inputs', '[""]');
-                  router.replace('/');
+                  router.navigate('/');
                 },
               },
             ]);
