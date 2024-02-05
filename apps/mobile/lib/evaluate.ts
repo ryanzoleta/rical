@@ -35,7 +35,7 @@ export function evaluate(input: string, variables: Variable[], rates: ExchangeRa
     RE_CONVERSION.lastIndex = 0;
     const tokens = tokenizeConversion(input, variables);
 
-    if (tokens) {
+    if (tokens && tokens.src && tokens.dest) {
       if (areCurrencies(tokens.src, tokens.dest)) {
         const result = evalCurrencyConcersion(tokens, rates);
         return {
