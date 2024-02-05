@@ -182,6 +182,9 @@ export function isPercentage(input: string) {
 }
 
 export function format(result: Result, precision: number, locale: string) {
+  if (!result.raw) {
+    return ' ';
+  }
   if (result.formatType === 'number') {
     return Intl.NumberFormat(locale, { maximumFractionDigits: precision }).format(
       result.raw as number,
@@ -204,6 +207,8 @@ export function format(result: Result, precision: number, locale: string) {
       result.unit
     );
   } else if (result.formatType === 'none') {
+    return ' ';
+  } else {
     return ' ';
   }
 }
