@@ -1,6 +1,6 @@
 import { ChevronRight, Sun, Hash, ChevronLeft } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, Pressable } from 'react-native';
+import { View, Text, SafeAreaView, Pressable, Alert } from 'react-native';
 import colors from 'tailwindcss/colors';
 import { router, useNavigation } from 'expo-router';
 import { useColorScheme } from 'nativewind';
@@ -37,7 +37,7 @@ function SettingsPage() {
 
       <View className="gap-3">
         <Pressable
-          className="mx-2 flex-row items-center justify-between rounded-lg bg-white p-4 transition-colors duration-300 dark:bg-zinc-800 dark:active:bg-zinc-700"
+          className="mx-2 flex-row items-center justify-between rounded-lg bg-white p-4 transition-colors duration-300 active:bg-zinc-200 dark:bg-zinc-800 dark:active:bg-zinc-700"
           onPress={() => {
             router.push('/appearance');
           }}
@@ -54,7 +54,7 @@ function SettingsPage() {
         </Pressable>
 
         <Pressable
-          className="mx-2 flex-row items-center justify-between rounded-lg bg-white p-4 transition-colors duration-300 dark:bg-zinc-800 dark:active:bg-zinc-700"
+          className="mx-2 flex-row items-center justify-between rounded-lg bg-white p-4 transition-colors duration-300 active:bg-zinc-200 dark:bg-zinc-800 dark:active:bg-zinc-700"
           onPress={() => {
             router.push('/precision');
           }}
@@ -70,6 +70,29 @@ function SettingsPage() {
             </Text>
             <ChevronRight color={colorScheme === 'dark' ? colors.zinc[200] : colors.zinc[400]} />
           </View>
+        </Pressable>
+
+        <Pressable
+          className="mx-2 flex-row items-center justify-center gap-2 rounded-lg bg-white p-4
+           dark:bg-zinc-800 dark:active:bg-zinc-700"
+          onPress={() => {
+            Alert.alert('Clear data', 'Are you sure you want to clear all data?', [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+              },
+              {
+                text: 'Clear',
+                style: 'destructive',
+                onPress: () => {
+                  AsyncStorage.setItem('inputs', '[""]');
+                  router.replace('/');
+                },
+              },
+            ]);
+          }}
+        >
+          <Text className="text-center text-xl text-red-500">Clear Data</Text>
         </Pressable>
       </View>
     </SafeAreaView>
