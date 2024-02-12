@@ -13,8 +13,9 @@
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"@types/pg": "^8.11.0",
 		"autoprefixer": "^10.4.17",
-		"drizzle-kit": "^0.20.13",
+		"drizzle-kit": "^0.20.14",
 		"postcss": "^8.4.33",
 		"prettier-plugin-tailwindcss": "^0.5.11",
 		"svelte": "^4.2.7",
@@ -29,6 +30,7 @@
 		"axios": "^1.6.7",
 		"drizzle-orm": "^0.29.3",
 		"moment": "^2.30.1",
-		"mysql2": "^3.9.1"
+		"mysql2": "^3.9.1",
+		"pg": "^8.11.3"
 	}
 }
