@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ryanzoleta.rical"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,6 +31,14 @@
       "expo-router",
       "expo-localization"
     ],
-    "scheme": "rical"
+    "scheme": "rical",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "809d2804-30e3-4bf4-9ae3-dd02b3d56016"
+      }
+    }
   }
 }
