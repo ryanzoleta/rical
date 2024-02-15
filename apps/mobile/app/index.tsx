@@ -52,7 +52,7 @@ export default function HomeScreen() {
         setPrecision(parseInt(precisionValue ?? '2'));
 
         console.log('Setting rates from the server...');
-        axios.get('http://localhost:5173/api/rates').then((response) => {
+        axios.get('https://rical.vercel.app/api/rates').then((response) => {
           const ratesToStore = { rates: response.data, updatedAt: new Date() } as StoredRates;
           AsyncStorage.setItem('rates', JSON.stringify(ratesToStore));
           setRates(response.data);
